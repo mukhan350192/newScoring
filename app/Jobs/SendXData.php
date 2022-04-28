@@ -98,8 +98,8 @@ class SendXData implements ShouldQueue
                 if ($n['@attributes']['id'][0] == 1) {
                     $amount = [];
                     $newAmount = [];
-                    for ($i = 1; $i < sizeof($xml['DebtorBan']['Companies']['Company']); $i++) {
-                        $a = (array)$xml['DebtorBan']['Companies']['Company'][$i]['RecoveryAmount'];
+                    for ($i = 1; $i < sizeof($xml->DebtorBan->Companies->Company); $i++) {
+                        $a = (array)$xml->DebtorBan->Companies->Company[$i]->RecoveryAmount;
                         array_push($amount, $a['@attributes']['value']);
                         $newAmount = array_unique($amount);
                         array_push($newAmount);
