@@ -52,7 +52,7 @@ class SendXData implements ShouldQueue
                 //$response = $response->getBody()->getContents();
                 $xml = simplexml_load_string($response->getBody(), 'SimpleXMLElement', LIBXML_NOCDATA);
                 var_dump($xml);
-                $full = ($xml['ROOT']['Header']['Subject']['Name']['value'][0]);
+                $full = ($xml->Header->Subject->Name->value[0]);
 
                 $lastName = $data['lastName'];
                 $name = $data['name'];
@@ -65,33 +65,33 @@ class SendXData implements ShouldQueue
                     $result['fio'] = "ФИО не совпадают $full";
                 }
                 $result['error'] = false;
-                if ($xml['TerrorList']['Status']['id'][0] == 1) {
+                if ($xml->TerrorList->Status->id[0] == 1) {
                     $result['message1'] = 'Перечень организаций и лиц, связанных с финансированием терроризма и экстремизма. Не найден.';
                     $result['error'] = true;
                 }
 
-                if ($xml['KgdWanted']['Status']['id'][0] == 1) {
+                if ($xml->KgdWanted->Status->id[0] == 1) {
                     $result['message2'] = 'Розыск Комитетом государственных доходов Министерства Финансов РК. Найден';
                     $result['error'] = true;
                 }
 
-                if ($xml['QamqorList']['Status']['id'][0] == 1) {
+                if ($xml->QamqorList->Status->id[0] == 1) {
                     $result['message3'] = 'Розыск преступников, должников, без вести пропавших лиц Комитетом по правовой статистике и специальным учетам ГП РК. Найден.';
                     $result['error'] = true;
                 }
 
-                if ($xml['FalseBusi']['Status']['id'][0] == 1) {
+                if ($xml->FalseBusi->Status->id[0] == 1) {
                     $result['message4'] = 'Перечень налогоплательщиков, осуществивших лжепредпринимательскую деятельность. Найден.';
                     $result['error'] = true;
                 }
 
-                if ($xml['Pedophile']['Status']['id'][0] == 1) {
+                if ($xml->Pedophile->Status->id[0] == 1) {
                     $result['message5'] = 'Сведения о лицах, привлеченные к уголовной отвественности за совершение уголовных правонарушений против половой неприкосновенности несовершеннолетних. Найден.';
                     $result['error'] = true;
                 }
 
 
-                $n = (array)$xml['DebtorBan']['Status'];
+                $n = (array)$xml->DebtorBan->Status;
                 if ($n['@attributes']['id'][0] == 3) {
                     $result['access'] = true;
 
