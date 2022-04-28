@@ -121,7 +121,7 @@ class SendXData implements ShouldQueue
         } while (false);
         $leadID = $data['leadID'];
         $phone = $data['phone'];
-        $responseUrl = 'https://icredit-crm.kz/api/test/test.php?leadID=' . $leadID . '&phone=' . '&iin=' . $iin . '&';
+        $responseUrl = 'https://icredit-crm.kz/api/test/test.php?leadID=' . $leadID . '&phone=' . $phone.'&iin=' . $iin . '&';
         if (isset($result['error']) && $result['error'] == true) {
             $responseUrl .= 'otkazId=10411&message=2';
         }
