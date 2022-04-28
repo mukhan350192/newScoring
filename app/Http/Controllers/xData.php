@@ -43,7 +43,7 @@ class xData extends Controller
                 'name' => $name,
                 'fatherName' => $fatherName,
             ];
-            SendXData::dispatch($data);
+            SendXData::dispatch($data)->delay(now()->addSecond(10));
             $result['success'] = true;
 
         }while(false);
