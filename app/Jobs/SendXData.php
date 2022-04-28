@@ -32,8 +32,9 @@ class SendXData implements ShouldQueue
      *
      * @return void
      */
-    public function handle($data)
+    public function handle()
     {
+        $data = $this->data;
         $iin = $data['iin'];
         $url = 'https://secure2.1cb.kz/asource/v1/' . strval($iin) . '.xml';
         $username = env('xdata_username');
