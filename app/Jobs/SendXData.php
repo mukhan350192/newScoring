@@ -51,7 +51,7 @@ class SendXData implements ShouldQueue
                 ]);
                 //$response = $response->getBody()->getContents();
                 $xml = simplexml_load_string($response->getBody(), 'SimpleXMLElement', LIBXML_NOCDATA);
-                $full = ($xml['Header']['Subject']['Name']['value'][0]);
+                $full = ($xml['ROOT']['Header']['Subject']['Name']['value'][0]);
 
                 $lastName = $data['lastName'];
                 $name = $data['name'];
