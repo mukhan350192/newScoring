@@ -39,6 +39,7 @@ class SendXData implements ShouldQueue
         $url = 'https://secure2.1cb.kz/asource/v1/' . strval($iin) . '.xml';
         $username = env('xdata_username');
         $password = env('xdata_password');
+        $result['success'] = false;
         do {
             $http = new Client(['verify' => false]);
             try {
