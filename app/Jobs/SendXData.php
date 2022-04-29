@@ -52,7 +52,6 @@ class SendXData implements ShouldQueue
                 ]);
                 //$response = $response->getBody()->getContents();
                 $xml = simplexml_load_string($response->getBody(), 'SimpleXMLElement', LIBXML_NOCDATA);
-                var_dump($xml);
                 $full = ($xml->Header->Subject->Name->value[0]);
 
                 $lastName = $data['lastName'];
@@ -131,6 +130,7 @@ class SendXData implements ShouldQueue
         if (isset($result['access']) && $result['access'] == true){
             $responseUrl .= 'access=true&message=1';
         }
+        echo $responseUrl;
         $http->get($responseUrl);
     }
 }
