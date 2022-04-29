@@ -40,6 +40,7 @@ class SendXData implements ShouldQueue
         $username = env('xdata_username');
         $password = env('xdata_password');
         $result['success'] = false;
+        echo $username." ".$password;
         do {
             $http = new Client(['verify' => false]);
             try {
@@ -51,6 +52,7 @@ class SendXData implements ShouldQueue
                 ]);
                 //$response = $response->getBody()->getContents();
                 $xml = simplexml_load_string($response->getBody(), 'SimpleXMLElement', LIBXML_NOCDATA);
+                var_dump($xml);
                 $full = ($xml->Header->Subject->Name->value[0]);
 
                 $lastName = $data['lastName'];

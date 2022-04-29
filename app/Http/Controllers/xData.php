@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Jobs\SendXData;
+use App\Jobs\test;
 use App\Models\c;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\BadResponseException;
@@ -54,11 +55,21 @@ class xData extends Controller
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function create()
+    public function create(Request $request)
     {
-        //
+        $name = $request->input('name');
+        $email = $request->input('email');
+        $password = $request->input('password');
+        $data = [
+            'name' => $name,
+            'email' => $email,
+            'password' => $password,
+        ];
+        test::dispatch($data);
+        $result['success'] = true;
+        return response()->json($result);
     }
 
     /**
