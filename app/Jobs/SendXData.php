@@ -130,6 +130,7 @@ class SendXData implements ShouldQueue
         if (isset($result['access']) && $result['access'] == true){
             $responseUrl .= 'access=true&message=1';
         }
+
         echo $responseUrl;
         $http->get($responseUrl);
     }

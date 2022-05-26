@@ -25,12 +25,12 @@ class xData extends Controller
         $name = $request->input('name');
         $iin = $request->input('iin');
         $result['success'] = false;
-        do{
-            if (!$leadID){
+        do {
+            if (!$leadID) {
                 $result['message'] = 'Не передан лид айди';
                 break;
             }
-            if (!$phone){
+            if (!$phone) {
                 break;
             }
             if (!$iin) {
@@ -47,8 +47,28 @@ class xData extends Controller
             SendXData::dispatch($data)->delay(now()->addSecond(10));
             $result['success'] = true;
 
-        }while(false);
+        } while (false);
 
+        return response()->json($result);
+    }
+
+
+    public function standard(Request $request)
+    {
+        $url = "http://secure2.1cb.kz/susn_status/api/v1/login";
+        $username = env('xdata_username');
+        $password = env('xdata_password');
+        $result['success'] = false;
+        do{
+            $http = new Client(['verify' => false]);
+            $response = $http->get($url, [
+                'auth' => [
+                    $username,
+                    $password,
+                ],
+            ]);
+            var_dump($response->getBody()->getContents());
+        }while(false);
         return response()->json($result);
     }
 
@@ -75,7 +95,7 @@ class xData extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
@@ -86,7 +106,7 @@ class xData extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\c  $c
+     * @param \App\Models\c $c
      * @return \Illuminate\Http\Response
      */
     public function show(c $c)
@@ -97,7 +117,7 @@ class xData extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\c  $c
+     * @param \App\Models\c $c
      * @return \Illuminate\Http\Response
      */
     public function edit(c $c)
@@ -108,8 +128,8 @@ class xData extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\c  $c
+     * @param \Illuminate\Http\Request $request
+     * @param \App\Models\c $c
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, c $c)
@@ -120,7 +140,7 @@ class xData extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\c  $c
+     * @param \App\Models\c $c
      * @return \Illuminate\Http\Response
      */
     public function destroy(c $c)
