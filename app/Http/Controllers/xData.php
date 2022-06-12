@@ -215,7 +215,8 @@ class xData extends Controller
                 'body' => json_encode($body),
             ]);
             $res = $res->getBody()->getContents();
-            print_r($res);
+            $res = json_decode($res,true);
+            print_r($res['status']);
         } while (false);
         return response()->json($result);
     }
