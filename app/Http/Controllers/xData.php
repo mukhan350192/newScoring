@@ -48,7 +48,7 @@ class xData extends Controller
             $username = '7015382439';
             $password = '7015382439';
             $result['success'] = false;
-            var_dump($username);
+
 
             $http = new Client(['verify' => false]);
             try {
