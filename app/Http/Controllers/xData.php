@@ -174,59 +174,49 @@ class xData extends Controller
         return response()->json($result);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
+    public function susn(Request $request){
+        $iin = $request->input('iin');
+        $url = "https://secure2.1cb.kz/susn-status/api/v1/login";
+        $username = 7471656497;
+        $password = 970908350192;
+        $result['success'] = false;
+        do {
+            if (!$iin) {
+                $result['message'] = 'Не передан параметры';
+                break;
+            }
+            if (strlen($iin) != 12) {
+                $result['message'] = 'Длина ИИН должен быть 12';
+                break;
+            }
+            $http = new Client(['verify' => false]);
+            $response = $http->get($url, [
+                'headers' => [
+                    'Authorization' => 'Basic ' . base64_encode('7471656497:970908350192'),
+                    'Content-Type' => 'application/json',
+                    'Accept' => 'application/json',
+                ],
+            ]);
+            $response = $response->getBody()->getContents();
+            $response = json_decode($response, true);
+            $hash = $response['access']['hash'];
+            var_dump($hash);
+            $url = "https://secure2.1cb.kz/susn-status/api/v1/subject/$iin";
+            $headers = [
+                'Content-Type' => 'application/json',
+                'Consent-Confirmed' => 1,
+            ];
+            $body = [
+                'token_hash' => $hash,
+            ];
 
-    /**
-     * Display the specified resource.
-     *
-     * @param \App\Models\c $c
-     * @return \Illuminate\Http\Response
-     */
-    public function show(c $c)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param \App\Models\c $c
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(c $c)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param \Illuminate\Http\Request $request
-     * @param \App\Models\c $c
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, c $c)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param \App\Models\c $c
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(c $c)
-    {
-        //
+            $res = $http->get($url, [
+                'headers' => $headers,
+                'body' => json_encode($body),
+            ]);
+            $res = $res->getBody()->getContents();
+            print_r($res);
+        } while (false);
+        return response()->json($result);
     }
 }
