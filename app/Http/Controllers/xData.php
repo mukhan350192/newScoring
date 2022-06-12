@@ -48,7 +48,7 @@ class xData extends Controller
             $username = env('xdata_username');
             $password = env('xdata_password');
             $result['success'] = false;
-            echo $username . " " . $password;
+            var_dump($username);
 
             $http = new Client(['verify' => false]);
             try {
