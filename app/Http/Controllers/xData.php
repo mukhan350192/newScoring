@@ -238,7 +238,7 @@ class xData extends Controller
                     break;
                 }
             }
-
+            $result['success'] = true;
         } while (false);
         return response()->json($result);
     }
