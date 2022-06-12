@@ -112,6 +112,7 @@ class xData extends Controller
 
             } catch (BadResponseException $e) {
                 info($e);
+                print_r($e);
             }
             // SendXData::dispatch($data)->delay(now()->addSecond(10));
             $result['success'] = true;
