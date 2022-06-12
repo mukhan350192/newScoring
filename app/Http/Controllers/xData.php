@@ -60,32 +60,44 @@ class xData extends Controller
                 ]);
                 //$response = $response->getBody()->getContents();
                 $xml = simplexml_load_string($response->getBody(), 'SimpleXMLElement', LIBXML_NOCDATA);
-                print_r($xml);
 
 
                 $result['error'] = false;
-                /*if ($xml->TerrorList->Status->id[0] == 1) {
-                    $result['message1'] = 'Перечень организаций и лиц, связанных с финансированием терроризма и экстремизма. Не найден.';
+                if ($xml->TerrorList->Status->id[0] == 1) {
+                    $result['message'] = 'Перечень организаций и лиц, связанных с финансированием терроризма и экстремизма. Не найден.';
                     $result['error'] = true;
+                    break;
                 }
 
                 if ($xml->KgdWanted->Status->id[0] == 1) {
-                    $result['message2'] = 'Розыск Комитетом государственных доходов Министерства Финансов РК. Найден';
+                    $result['message'] = 'Розыск Комитетом государственных доходов Министерства Финансов РК. Найден';
                     $result['error'] = true;
+                    break;
+                }
+
+                if ($xml->QamqorAlimony->Status->id[0] == 1) {
+                    $result['message'] = 'Розыск алиментщиков Комитетом по правовой статистике и специальным учетам ГП РК. Найден';
+                    $result['error'] = true;
+                    break;
                 }
 
                 if ($xml->QamqorList->Status->id[0] == 1) {
-                    $result['message3'] = 'Розыск преступников, должников, без вести пропавших лиц Комитетом по правовой статистике и специальным учетам ГП РК. Найден.';
+                    $result['message'] = 'Розыск преступников, должников, без вести пропавших лиц Комитетом по правовой статистике и специальным учетам ГП РК. Найден.';
                     $result['error'] = true;
+                    break;
                 }
-
-                if ($xml->Pedophile->Status->id[0] == 1) {
+                if ($xml->Dynamics->Dynamic->status->id == 1){
+                    $result['message'] = 'Информационный сервис. Комитет по правовой статистике и специальным учетам Генеральной прокуратуры Республики Казахстан. Найден';
+                    $result['error'] = true;
+                    break;
+                }
+              /*  if ($xml->Pedophile->Status->id[0] == 1) {
                     $result['message5'] = 'Сведения о лицах, привлеченные к уголовной отвественности за совершение уголовных правонарушений против половой неприкосновенности несовершеннолетних. Найден.';
                     $result['error'] = true;
-                }
+                }*/
 
 
-                $n = (array)$xml->DebtorBan->Status;
+              /*  $n = (array)$xml->DebtorBan->Status;
                 if ($n['@attributes']['id'][0] == 3) {
                     $result['access'] = true;
 
