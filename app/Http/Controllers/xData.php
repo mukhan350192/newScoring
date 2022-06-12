@@ -180,6 +180,7 @@ class xData extends Controller
         $username = 7471656497;
         $password = 970908350192;
         $result['success'] = false;
+        $result['error'] = false;
         do {
             if (!$iin) {
                 $result['message'] = 'Не передан параметры';
@@ -217,27 +218,27 @@ class xData extends Controller
             $res = json_decode($res,true);
             foreach ($res['status'] as $status){
                 if ($status['statusCode'] == 10000){
+                    $result['error'] = true;
                     $result['message'] = 'Многодетные матери, награжденные подвесками «Алтын алќа», «Кїміс алќа» или получившие ранее звание «Мать-героиня», а также награжденные орденами «Материнская слава» I и II степени';
                     break;
                 }
                 if ($status['statusCode'] == 39000){
+                    $result['error'] = true;
                     $result['message'] = 'Многодетные семьи';
                     break;
                 }
                 if ($status['statusCode'] == 17005){
+                    $result['error'] = true;
                     $result['message'] = 'Лица, осуществляющие уход за ребенком-инвалидом';
                     break;
                 }
                 if ($status['statusCode'] == 11100){
+                    $result['error'] = true;
                     $result['message'] = 'Инвалиды первой группы';
                     break;
                 }
             }
-            if (isset($result['message'])){
-                $result['success'] = false;
-            }else{
-                $result['success'] = true;
-            }
+
         } while (false);
         return response()->json($result);
     }
