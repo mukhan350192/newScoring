@@ -232,8 +232,8 @@ class xData extends Controller
                     $result['message'] = 'Инвалиды первой группы';
                     break;
                 }
+                $result['success'] = true;
             }
-            $result['success'] = true;
         } while (false);
         return response()->json($result);
     }
