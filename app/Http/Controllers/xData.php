@@ -64,7 +64,7 @@ class xData extends Controller
 
 
                 $result['error'] = false;
-                if ($xml->TerrorList->Status->id[0] == 1) {
+                /*if ($xml->TerrorList->Status->id[0] == 1) {
                     $result['message1'] = 'Перечень организаций и лиц, связанных с финансированием терроризма и экстремизма. Не найден.';
                     $result['error'] = true;
                 }
@@ -107,7 +107,7 @@ class xData extends Controller
                         $result['error'] = true;
                         $result['message6'] = 'Сумма взыскании ' . $sum . ' тенге.';
                     }
-                }
+                }*/
 
 
             } catch (BadResponseException $e) {
