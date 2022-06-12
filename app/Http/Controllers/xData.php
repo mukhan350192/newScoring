@@ -215,7 +215,25 @@ class xData extends Controller
             ]);
             $res = $res->getBody()->getContents();
             $res = json_decode($res,true);
-            print_r($res['status']);
+            foreach ($res['status'] as $status){
+                if ($status['statusCode'] == 10000){
+                    $result['message'] = 'Многодетные матери, награжденные подвесками «Алтын алќа», «Кїміс алќа» или получившие ранее звание «Мать-героиня», а также награжденные орденами «Материнская слава» I и II степени';
+                    break;
+                }
+                if ($status['statusCode'] == 39000){
+                    $result['message'] = 'Многодетные семьи';
+                    break;
+                }
+                if ($status['statusCode'] == 17005){
+                    $result['message'] = 'Лица, осуществляющие уход за ребенком-инвалидом';
+                    break;
+                }
+                if ($status['statusCode'] == 11100){
+                    $result['message'] = 'Инвалиды первой группы';
+                    break;
+                }
+            }
+            $result['success'] = true;
         } while (false);
         return response()->json($result);
     }
