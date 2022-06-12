@@ -45,8 +45,8 @@ class xData extends Controller
                  'fatherName' => $fatherName,
              ];*/
             $url = 'https://secure2.1cb.kz/asource/v1/' . strval($iin) . '.xml';
-            $username = '7471656497';
-            $password = '970908350192';
+            $username = '7015382439';
+            $password = '7015382439';
             $result['success'] = false;
             var_dump($username);
 
