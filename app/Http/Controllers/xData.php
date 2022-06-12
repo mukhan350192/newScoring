@@ -232,6 +232,10 @@ class xData extends Controller
                     $result['message'] = 'Инвалиды первой группы';
                     break;
                 }
+            }
+            if (isset($result['message'])){
+                $result['success'] = false;
+            }else{
                 $result['success'] = true;
             }
         } while (false);
