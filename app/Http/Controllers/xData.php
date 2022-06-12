@@ -36,15 +36,84 @@ class xData extends Controller
             if (!$iin) {
                 break;
             }
-            $data = [
-                'leadID' => $leadID,
-                'iin' => $iin,
-                'phone' => $phone,
-                'lastName' => $lastName,
-                'name' => $name,
-                'fatherName' => $fatherName,
-            ];
-            SendXData::dispatch($data)->delay(now()->addSecond(10));
+            /* $data = [
+                 'leadID' => $leadID,
+                 'iin' => $iin,
+                 'phone' => $phone,
+                 'lastName' => $lastName,
+                 'name' => $name,
+                 'fatherName' => $fatherName,
+             ];*/
+            $url = 'https://secure2.1cb.kz/asource/v1/' . strval($iin) . '.xml';
+            $username = env('xdata_username');
+            $password = env('xdata_password');
+            $result['success'] = false;
+            echo $username . " " . $password;
+
+            $http = new Client(['verify' => false]);
+            try {
+                $response = $http->get($url, [
+                    'auth' => [
+                        $username,
+                        $password,
+                    ],
+                ]);
+                //$response = $response->getBody()->getContents();
+                $xml = simplexml_load_string($response->getBody(), 'SimpleXMLElement', LIBXML_NOCDATA);
+                print_r($xml);
+
+
+                $result['error'] = false;
+                if ($xml->TerrorList->Status->id[0] == 1) {
+                    $result['message1'] = 'Перечень организаций и лиц, связанных с финансированием терроризма и экстремизма. Не найден.';
+                    $result['error'] = true;
+                }
+
+                if ($xml->KgdWanted->Status->id[0] == 1) {
+                    $result['message2'] = 'Розыск Комитетом государственных доходов Министерства Финансов РК. Найден';
+                    $result['error'] = true;
+                }
+
+                if ($xml->QamqorList->Status->id[0] == 1) {
+                    $result['message3'] = 'Розыск преступников, должников, без вести пропавших лиц Комитетом по правовой статистике и специальным учетам ГП РК. Найден.';
+                    $result['error'] = true;
+                }
+
+                if ($xml->Pedophile->Status->id[0] == 1) {
+                    $result['message5'] = 'Сведения о лицах, привлеченные к уголовной отвественности за совершение уголовных правонарушений против половой неприкосновенности несовершеннолетних. Найден.';
+                    $result['error'] = true;
+                }
+
+
+                $n = (array)$xml->DebtorBan->Status;
+                if ($n['@attributes']['id'][0] == 3) {
+                    $result['access'] = true;
+
+                }
+                if ($n['@attributes']['id'][0] == 1) {
+                    $amount = [];
+                    $newAmount = [];
+                    for ($i = 1; $i < sizeof($xml->DebtorBan->Companies->Company); $i++) {
+                        $a = (array)$xml->DebtorBan->Companies->Company[$i]->RecoveryAmount;
+                        array_push($amount, $a['@attributes']['value']);
+                        $newAmount = array_unique($amount);
+                        array_push($newAmount);
+                    }
+                    $sum = 0;
+                    foreach ($newAmount as $key) {
+                        $sum += $key;
+                    }
+                    if ($sum > 90000) {
+                        $result['error'] = true;
+                        $result['message6'] = 'Сумма взыскании ' . $sum . ' тенге.';
+                    }
+                }
+
+
+            } catch (BadResponseException $e) {
+                info($e);
+            }
+            // SendXData::dispatch($data)->delay(now()->addSecond(10));
             $result['success'] = true;
 
         } while (false);
@@ -59,7 +128,7 @@ class xData extends Controller
         $username = env('xdata_username');
         $password = env('xdata_password');
         $result['success'] = false;
-        do{
+        do {
             $http = new Client(['verify' => false]);
             $response = $http->get($url, [
                 'auth' => [
@@ -68,7 +137,7 @@ class xData extends Controller
                 ],
             ]);
             var_dump($response->getBody()->getContents());
-        }while(false);
+        } while (false);
         return response()->json($result);
     }
 
