@@ -200,7 +200,6 @@ class xData extends Controller
             $response = $response->getBody()->getContents();
             $response = json_decode($response, true);
             $hash = $response['access']['hash'];
-            var_dump($hash);
             $url = "https://secure2.1cb.kz/susn-status/api/v1/subject/$iin";
             $headers = [
                 'Content-Type' => 'application/json',
@@ -216,7 +215,7 @@ class xData extends Controller
             ]);
             $res = $res->getBody()->getContents();
             $res = json_decode($res,true);
-            print_r($res);
+            print_r($res['status']);
         } while (false);
         return response()->json($result);
     }
