@@ -86,7 +86,7 @@ class SendXData implements ShouldQueue
                     break;
                 }
                 $s = json_encode($result);
-                DB::table('response')->insertGetId([
+                DB::table('test')->insertGetId([
                     'response' => $s,
                     'created_at' => Carbon::now(),
                     'updated_at' => Carbon::now(),
