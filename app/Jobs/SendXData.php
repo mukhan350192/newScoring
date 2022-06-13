@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use Carbon\Carbon;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\BadResponseException;
 use Illuminate\Bus\Queueable;
@@ -10,6 +11,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\DB;
 
 class SendXData implements ShouldQueue
 {
@@ -37,10 +39,10 @@ class SendXData implements ShouldQueue
         $data = $this->data;
         $iin = $data['iin'];
         $url = 'https://secure2.1cb.kz/asource/v1/' . strval($iin) . '.xml';
-        $username = env('xdata_username');
-        $password = env('xdata_password');
+        $username = '7015382439';
+        $password = '7015382439';
         $result['success'] = false;
-        echo $username." ".$password;
+
         do {
             $http = new Client(['verify' => false]);
             try {
@@ -52,73 +54,80 @@ class SendXData implements ShouldQueue
                 ]);
                 //$response = $response->getBody()->getContents();
                 $xml = simplexml_load_string($response->getBody(), 'SimpleXMLElement', LIBXML_NOCDATA);
-                $full = ($xml->Header->Subject->Name->value[0]);
 
-                $lastName = $data['lastName'];
-                $name = $data['name'];
-                $fatherName = $data['name'];
 
-                $original = mb_strtoupper($lastName) . ' ' . mb_strtoupper($name) . ' ' . mb_strtoupper($fatherName);
-                if (strcmp($full, $original) == 0) {
-                    $result['fio'] = 'ФИО совпадают';
-                } else if (strcmp($full, $original) !== 0) {
-                    $result['fio'] = "ФИО не совпадают $full";
-                }
                 $result['error'] = false;
                 if ($xml->TerrorList->Status->id[0] == 1) {
-                    $result['message1'] = 'Перечень организаций и лиц, связанных с финансированием терроризма и экстремизма. Не найден.';
+                    $result['message'] = 'Перечень организаций и лиц, связанных с финансированием терроризма и экстремизма. Не найден.';
                     $result['error'] = true;
+                    break;
                 }
 
                 if ($xml->KgdWanted->Status->id[0] == 1) {
-                    $result['message2'] = 'Розыск Комитетом государственных доходов Министерства Финансов РК. Найден';
+                    $result['message'] = 'Розыск Комитетом государственных доходов Министерства Финансов РК. Найден';
                     $result['error'] = true;
+                    break;
+                }
+
+                if ($xml->QamqorAlimony->Status->id[0] == 1) {
+                    $result['message'] = 'Розыск алиментщиков Комитетом по правовой статистике и специальным учетам ГП РК. Найден';
+                    $result['error'] = true;
+                    break;
                 }
 
                 if ($xml->QamqorList->Status->id[0] == 1) {
-                    $result['message3'] = 'Розыск преступников, должников, без вести пропавших лиц Комитетом по правовой статистике и специальным учетам ГП РК. Найден.';
+                    $result['message'] = 'Розыск преступников, должников, без вести пропавших лиц Комитетом по правовой статистике и специальным учетам ГП РК. Найден.';
                     $result['error'] = true;
+                    break;
                 }
-
-                if ($xml->FalseBusi->Status->id[0] == 1) {
-                    $result['message4'] = 'Перечень налогоплательщиков, осуществивших лжепредпринимательскую деятельность. Найден.';
+                if ($xml->Dynamics->Dynamic->status->id == 1){
+                    $result['message'] = 'Информационный сервис. Комитет по правовой статистике и специальным учетам Генеральной прокуратуры Республики Казахстан. Найден';
                     $result['error'] = true;
+                    break;
                 }
+                $s = json_encode($result);
+                DB::table('response')->insertGetId([
+                    'response' => $s,
+                    'created_at' => Carbon::now(),
+                    'updated_at' => Carbon::now(),
+                ]);
+                /*  if ($xml->Pedophile->Status->id[0] == 1) {
+                      $result['message5'] = 'Сведения о лицах, привлеченные к уголовной отвественности за совершение уголовных правонарушений против половой неприкосновенности несовершеннолетних. Найден.';
+                      $result['error'] = true;
+                  }*/
 
-                if ($xml->Pedophile->Status->id[0] == 1) {
-                    $result['message5'] = 'Сведения о лицах, привлеченные к уголовной отвественности за совершение уголовных правонарушений против половой неприкосновенности несовершеннолетних. Найден.';
-                    $result['error'] = true;
-                }
 
+                /*  $n = (array)$xml->DebtorBan->Status;
+                  if ($n['@attributes']['id'][0] == 3) {
+                      $result['access'] = true;
 
-                $n = (array)$xml->DebtorBan->Status;
-                if ($n['@attributes']['id'][0] == 3) {
-                    $result['access'] = true;
-
-                }
-                if ($n['@attributes']['id'][0] == 1) {
-                    $amount = [];
-                    $newAmount = [];
-                    for ($i = 1; $i < sizeof($xml->DebtorBan->Companies->Company); $i++) {
-                        $a = (array)$xml->DebtorBan->Companies->Company[$i]->RecoveryAmount;
-                        array_push($amount, $a['@attributes']['value']);
-                        $newAmount = array_unique($amount);
-                        array_push($newAmount);
-                    }
-                    $sum = 0;
-                    foreach ($newAmount as $key) {
-                        $sum += $key;
-                    }
-                    if ($sum > 90000) {
-                        $result['error'] = true;
-                        $result['message6'] = 'Сумма взыскании ' . $sum . ' тенге.';
-                    }
-                }
+                  }
+                  if ($n['@attributes']['id'][0] == 1) {
+                      $amount = [];
+                      $newAmount = [];
+                      for ($i = 1; $i < sizeof($xml->DebtorBan->Companies->Company); $i++) {
+                          $a = (array)$xml->DebtorBan->Companies->Company[$i]->RecoveryAmount;
+                          array_push($amount, $a['@attributes']['value']);
+                          $newAmount = array_unique($amount);
+                          array_push($newAmount);
+                      }
+                      $sum = 0;
+                      foreach ($newAmount as $key) {
+                          $sum += $key;
+                      }
+                      if ($sum > 90000) {
+                          $result['error'] = true;
+                          $result['message6'] = 'Сумма взыскании ' . $sum . ' тенге.';
+                      }
+                  }*/
 
 
             } catch (BadResponseException $e) {
                 info($e);
+                print_r($e);
             }
+            // SendXData::dispatch($data)->delay(now()->addSecond(10));
+            $result['success'] = true;
         } while (false);
         $leadID = $data['leadID'];
         $phone = $data['phone'];

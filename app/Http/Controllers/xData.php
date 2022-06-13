@@ -242,4 +242,21 @@ class xData extends Controller
         } while (false);
         return response()->json($result);
     }
+
+    public function testQueue(Request $request){
+        $iin = $request->input('iin');
+        $result['success'] = false;
+        do{
+            if (!$iin){
+                $result['message'] = 'Не передан иин';
+                break;
+            }
+            $data = [
+                'iin' => $iin,
+            ];
+            SendXData::dispatch($data);
+            $result['success'] = true;
+        }while(false);
+        return response()->json($result);
+    }
 }
