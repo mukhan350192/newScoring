@@ -32,7 +32,7 @@ class SendXData implements ShouldQueue
     /**
      * Execute the job.
      *
-     * @return void
+     * @return \Illuminate\Http\JsonResponse
      */
     public function handle()
     {
@@ -129,7 +129,7 @@ class SendXData implements ShouldQueue
             // SendXData::dispatch($data)->delay(now()->addSecond(10));
             $result['success'] = true;
         } while (false);
-        $leadID = $data['leadID'];
+      /*  $leadID = $data['leadID'];
         $phone = $data['phone'];
         $responseUrl = 'https://icredit-crm.kz/api/webhock/cronResponse.php?leadID=' . $leadID . '&phone=' . $phone.'&iin=' . $iin . '&';
         if (isset($result['error']) && $result['error'] == true) {
@@ -141,6 +141,7 @@ class SendXData implements ShouldQueue
         }
 
         echo $responseUrl;
-        $http->get($responseUrl);
+        $http->get($responseUrl);*/
+        return response()->json($result);
     }
 }
