@@ -21,3 +21,4 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::get('/xdata',[xData::class,'index']);
 Route::get('/test',[xData::class,'create']);
 Route::get('/susn',[xData::class,'susn']);
+Route::get('/testQueue',[xData::class,'testQueue']);
