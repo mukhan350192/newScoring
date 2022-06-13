@@ -60,8 +60,8 @@ class xData extends Controller
                 ]);
                 //$response = $response->getBody()->getContents();
                 $xml = simplexml_load_string($response->getBody(), 'SimpleXMLElement', LIBXML_NOCDATA);
-
-
+                var_dump($xml);
+                die();
                 $result['error'] = false;
                 if ($xml->TerrorList->Status->id[0] == 1) {
                     $result['message'] = 'Перечень организаций и лиц, связанных с финансированием терроризма и экстремизма. Не найден.';
