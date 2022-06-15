@@ -428,6 +428,7 @@ class xData extends Controller
             $score = $response['score'];
             $default = $response['default_probability'];
             $model_type = $response['model_type'];
+            print_r($response);
             $model_type_version = $response['model_type_version'];
             $defaultRange = $response['default_probability_range'];
             $risk_grade = $response['risk_grade'];
