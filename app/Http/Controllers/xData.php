@@ -386,7 +386,7 @@ class xData extends Controller
                 ]
             ]);
             $response = $response->getBody()->getContents();
-            $response = json_encode($response, true);
+            $response = json_decode($response, true);
 
             if (isset($response['status']) && $response['status'] == -2001) {
                 $result['message'] = 'Неверный формат ИИН';
@@ -424,7 +424,7 @@ class xData extends Controller
                 $result['amount'] = 10000;
                 break;
             }
-            print_r($response);
+
             $score = $response['score'];
             $default = $response['default_probability'];
             $model_type = $response['model_type'];
