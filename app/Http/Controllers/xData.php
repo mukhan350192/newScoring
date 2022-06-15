@@ -86,40 +86,40 @@ class xData extends Controller
                     $result['error'] = true;
                     break;
                 }
-                if ($xml->Dynamics->Dynamic->status->id == 1){
+                if ($xml->Dynamics->Dynamic->status->id == 1) {
                     $result['message'] = 'Информационный сервис. Комитет по правовой статистике и специальным учетам Генеральной прокуратуры Республики Казахстан. Найден';
                     $result['error'] = true;
                     break;
                 }
-              /*  if ($xml->Pedophile->Status->id[0] == 1) {
-                    $result['message5'] = 'Сведения о лицах, привлеченные к уголовной отвественности за совершение уголовных правонарушений против половой неприкосновенности несовершеннолетних. Найден.';
-                    $result['error'] = true;
-                }*/
+                /*  if ($xml->Pedophile->Status->id[0] == 1) {
+                      $result['message5'] = 'Сведения о лицах, привлеченные к уголовной отвественности за совершение уголовных правонарушений против половой неприкосновенности несовершеннолетних. Найден.';
+                      $result['error'] = true;
+                  }*/
 
 
-              /*  $n = (array)$xml->DebtorBan->Status;
-                if ($n['@attributes']['id'][0] == 3) {
-                    $result['access'] = true;
+                /*  $n = (array)$xml->DebtorBan->Status;
+                  if ($n['@attributes']['id'][0] == 3) {
+                      $result['access'] = true;
 
-                }
-                if ($n['@attributes']['id'][0] == 1) {
-                    $amount = [];
-                    $newAmount = [];
-                    for ($i = 1; $i < sizeof($xml->DebtorBan->Companies->Company); $i++) {
-                        $a = (array)$xml->DebtorBan->Companies->Company[$i]->RecoveryAmount;
-                        array_push($amount, $a['@attributes']['value']);
-                        $newAmount = array_unique($amount);
-                        array_push($newAmount);
-                    }
-                    $sum = 0;
-                    foreach ($newAmount as $key) {
-                        $sum += $key;
-                    }
-                    if ($sum > 90000) {
-                        $result['error'] = true;
-                        $result['message6'] = 'Сумма взыскании ' . $sum . ' тенге.';
-                    }
-                }*/
+                  }
+                  if ($n['@attributes']['id'][0] == 1) {
+                      $amount = [];
+                      $newAmount = [];
+                      for ($i = 1; $i < sizeof($xml->DebtorBan->Companies->Company); $i++) {
+                          $a = (array)$xml->DebtorBan->Companies->Company[$i]->RecoveryAmount;
+                          array_push($amount, $a['@attributes']['value']);
+                          $newAmount = array_unique($amount);
+                          array_push($newAmount);
+                      }
+                      $sum = 0;
+                      foreach ($newAmount as $key) {
+                          $sum += $key;
+                      }
+                      if ($sum > 90000) {
+                          $result['error'] = true;
+                          $result['message6'] = 'Сумма взыскании ' . $sum . ' тенге.';
+                      }
+                  }*/
 
 
             } catch (BadResponseException $e) {
@@ -174,7 +174,8 @@ class xData extends Controller
         return response()->json($result);
     }
 
-    public function susn(Request $request){
+    public function susn(Request $request)
+    {
         $iin = $request->input('iin');
         $url = "https://secure2.1cb.kz/susn-status/api/v1/login";
         $username = 7471656497;
@@ -215,24 +216,24 @@ class xData extends Controller
                 'body' => json_encode($body),
             ]);
             $res = $res->getBody()->getContents();
-            $res = json_decode($res,true);
-            foreach ($res['status'] as $status){
-                if ($status['statusCode'] == 10000){
+            $res = json_decode($res, true);
+            foreach ($res['status'] as $status) {
+                if ($status['statusCode'] == 10000) {
                     $result['error'] = true;
                     $result['message'] = 'Многодетные матери, награжденные подвесками «Алтын алќа», «Кїміс алќа» или получившие ранее звание «Мать-героиня», а также награжденные орденами «Материнская слава» I и II степени';
                     break;
                 }
-                if ($status['statusCode'] == 39000){
+                if ($status['statusCode'] == 39000) {
                     $result['error'] = true;
                     $result['message'] = 'Многодетные семьи';
                     break;
                 }
-                if ($status['statusCode'] == 17005){
+                if ($status['statusCode'] == 17005) {
                     $result['error'] = true;
                     $result['message'] = 'Лица, осуществляющие уход за ребенком-инвалидом';
                     break;
                 }
-                if ($status['statusCode'] == 11100){
+                if ($status['statusCode'] == 11100) {
                     $result['error'] = true;
                     $result['message'] = 'Инвалиды первой группы';
                     break;
@@ -243,11 +244,12 @@ class xData extends Controller
         return response()->json($result);
     }
 
-    public function testQueue(Request $request){
+    public function testQueue(Request $request)
+    {
         $iin = $request->input('iin');
         $result['success'] = false;
-        do{
-            if (!$iin){
+        do {
+            if (!$iin) {
                 $result['message'] = 'Не передан иин';
                 break;
             }
@@ -256,7 +258,34 @@ class xData extends Controller
             ];
             SendXData::dispatch($data);
             $result['success'] = true;
-        }while(false);
+        } while (false);
+        return response()->json($result);
+    }
+
+    public function pdl(Request $request)
+    {
+        $iin = $request->input('iin');
+        $result['success'] = false;
+
+        do {
+            if (!$iin) {
+                $result['message'] = 'Не передан ИИН';
+                break;
+            }
+            $url = 'https://secure2.1cb.kz/pdl/api/v1/' . $iin;
+            $username = 7017424940;
+            $password = 'Crjhbyu8901';
+            $http = new Client(['verify' => false]);
+            $response = $http->get($url, [
+                'headers' => [
+                    'Authorization' => 'Basic ' . base64_encode($username . ':' . $password),
+                    'Content-Type' => 'application/json',
+                    'Accept' => 'application/json',
+                    'Consent-Confirmed' => 1,
+                ]
+            ]);
+            print_r($response->getBody()->getContents());
+        } while (false);
         return response()->json($result);
     }
 }
