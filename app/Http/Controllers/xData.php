@@ -443,7 +443,7 @@ class xData extends Controller
                 'default_probability_range' => $defaultRange,
                 'risk_grade' => $risk_grade,
                 'score' => $score,
-                'reason_code' => $reason_code,
+                'reason_code' => json_encode($reason_code),
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ]);
