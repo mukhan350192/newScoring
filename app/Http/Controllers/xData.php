@@ -276,7 +276,7 @@ class xData extends Controller
             $username = 7017424940;
             $password = 'Crjhbyu8901';
             $http = new Client(['verify' => false]);
-            $response = $http->get($url, [
+            $response = $http->post($url, [
                 'headers' => [
                     'Authorization' => 'Basic ' . base64_encode($username . ':' . $password),
                     'Content-Type' => 'application/json',
