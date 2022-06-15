@@ -424,6 +424,7 @@ class xData extends Controller
                 $result['amount'] = 10000;
                 break;
             }
+            print_r($response);
             $score = $response['score'];
             $default = $response['default_probability'];
             $model_type = $response['model_type'];
