@@ -22,3 +22,4 @@ Route::get('/xdata',[xData::class,'index']);
 Route::get('/test',[xData::class,'create']);
 Route::get('/susn',[xData::class,'susn']);
 Route::get('/testQueue',[xData::class,'testQueue']);
+Route::get('/pdl',[xData::class,'pdl']);
