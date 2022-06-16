@@ -85,12 +85,7 @@ class SendXData implements ShouldQueue
                     $result['error'] = true;
                     break;
                 }
-                $s = json_encode($result);
-                DB::table('test')->insertGetId([
-                    'response' => $s,
-                    'created_at' => Carbon::now(),
-                    'updated_at' => Carbon::now(),
-                ]);
+
                 /*  if ($xml->Pedophile->Status->id[0] == 1) {
                       $result['message5'] = 'Сведения о лицах, привлеченные к уголовной отвественности за совершение уголовных правонарушений против половой неприкосновенности несовершеннолетних. Найден.';
                       $result['error'] = true;
@@ -129,9 +124,9 @@ class SendXData implements ShouldQueue
             // SendXData::dispatch($data)->delay(now()->addSecond(10));
             $result['success'] = true;
         } while (false);
-      /*  $leadID = $data['leadID'];
+        $leadID = $data['leadID'];
         $phone = $data['phone'];
-        $responseUrl = 'https://icredit-crm.kz/api/webhock/cronResponse.php?leadID=' . $leadID . '&phone=' . $phone.'&iin=' . $iin . '&';
+        $responseUrl = 'https://ic24.almait.kz/api/webhock/cronResponse.php?leadID=' . $leadID . '&phone=' . $phone.'&iin=' . $iin . '&';
         if (isset($result['error']) && $result['error'] == true) {
             $responseUrl .= 'otkazId=10411&message=2';
         }
@@ -140,8 +135,7 @@ class SendXData implements ShouldQueue
             $responseUrl .= 'access=true&message=1';
         }
 
-        echo $responseUrl;
-        $http->get($responseUrl);*/
+        $http->get($responseUrl);
         return response()->json($result);
     }
 }
