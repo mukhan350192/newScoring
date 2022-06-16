@@ -249,6 +249,8 @@ class xData extends Controller
     public function testQueue(Request $request)
     {
         $iin = $request->input('iin');
+        $phone = $request->input('phone');
+        $leadID = $request->input('leadID');
         $result['success'] = false;
         do {
             if (!$iin) {
@@ -257,6 +259,8 @@ class xData extends Controller
             }
             $data = [
                 'iin' => $iin,
+                'phone' => $phone,
+                'leadID' => $leadID,
             ];
             SendXData::dispatch($data);
             $result['success'] = true;
