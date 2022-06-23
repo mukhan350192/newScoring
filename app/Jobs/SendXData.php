@@ -86,11 +86,11 @@ class SendXData implements ShouldQueue
 
                 $n = (array)$xml->DebtorBan->Status;
 
-                if (isset($n) && $n['@attributes']['id'] == 3) {
+                if (isset($n['@attributes']) && $n['@attributes']['id'] == 3) {
                     $result['access'] = true;
 
                 }
-                if (isset($n) && $n['@attributes']['id'] == 1) {
+                if (isset($n['@attributes']) && $n['@attributes']['id'] == 1) {
                     $result['error'] = true;
                     $result['message'] = 'Актуальные сведения из единого реестра должников и временно ограниченных на выезд должников';
                     break;
