@@ -92,22 +92,9 @@ class xData extends Controller
 
                   }
                   if ($n['@attributes']['id'] == 1) {
-                      $amount = [];
-                      $newAmount = [];
-                      for ($i = 1; $i < sizeof($xml->DebtorBan->Companies->Company); $i++) {
-                          $a = (array)$xml->DebtorBan->Companies->Company[$i]->RecoveryAmount;
-                          array_push($amount, $a['@attributes']['value']);
-                          $newAmount = array_unique($amount);
-                          array_push($newAmount);
-                      }
-                      $sum = 0;
-                      foreach ($newAmount as $key) {
-                          $sum += $key;
-                      }
-                      if ($sum > 90000) {
-                          $result['error'] = true;
-                          $result['message6'] = 'Сумма взыскании ' . $sum . ' тенге.';
-                      }
+                      $result['error'] = true;
+                      $result['message'] = 'Актуальные сведения из единого реестра должников и временно ограниченных на выезд должников';
+                      break;
                   }
 
 
