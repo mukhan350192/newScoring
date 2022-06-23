@@ -22,9 +22,6 @@ class xData extends Controller
     {
         $leadID = $request->input('leadID');
         $phone = $request->input('phone');
-        $lastName = $request->input('lastName');
-        $fatherName = $request->input('fatherName');
-        $name = $request->input('name');
         $iin = $request->input('iin');
         $result['success'] = false;
         do {
@@ -38,14 +35,7 @@ class xData extends Controller
             if (!$iin) {
                 break;
             }
-            /* $data = [
-                 'leadID' => $leadID,
-                 'iin' => $iin,
-                 'phone' => $phone,
-                 'lastName' => $lastName,
-                 'name' => $name,
-                 'fatherName' => $fatherName,
-             ];*/
+
             $url = 'https://secure2.1cb.kz/asource/v1/' . strval($iin) . '.xml';
             $username = '7015382439';
             $password = '7015382439';
@@ -62,9 +52,7 @@ class xData extends Controller
                 ]);
                 //$response = $response->getBody()->getContents();
                 $xml = simplexml_load_string($response->getBody(), 'SimpleXMLElement', LIBXML_NOCDATA);
-                var_dump($xml);
-                die();
-                $result['error'] = false;
+                print_r($xml);
                 if ($xml->TerrorList->Status->id[0] == 1) {
                     $result['message'] = 'Перечень организаций и лиц, связанных с финансированием терроризма и экстремизма. Не найден.';
                     $result['error'] = true;
