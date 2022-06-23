@@ -86,7 +86,7 @@ class xData extends Controller
                       $result['error'] = true;
                   }*/
                 $n = (array)$xml->DebtorBan->Status;
-                print_r($n['@attributes']);
+                print_r($n['@attributes']['id']);
                 var_dump($n);
                 /*  ;
                   if ($n['@attributes']['id'][0] == 3) {
