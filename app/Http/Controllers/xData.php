@@ -85,9 +85,10 @@ class xData extends Controller
                       $result['message5'] = 'Сведения о лицах, привлеченные к уголовной отвественности за совершение уголовных правонарушений против половой неприкосновенности несовершеннолетних. Найден.';
                       $result['error'] = true;
                   }*/
-
-                print_r((array)$xml->DebtorBan->Status);
-                /*  $n = (array)$xml->DebtorBan->Status;
+                $n = (array)$xml->DebtorBan->Status;
+                print_r($n['@attributes']);
+                var_dump($n);
+                /*  ;
                   if ($n['@attributes']['id'][0] == 3) {
                       $result['access'] = true;
 
