@@ -81,10 +81,7 @@ class xData extends Controller
                     $result['error'] = true;
                     break;
                 }
-                /*  if ($xml->Pedophile->Status->id[0] == 1) {
-                      $result['message5'] = 'Сведения о лицах, привлеченные к уголовной отвественности за совершение уголовных правонарушений против половой неприкосновенности несовершеннолетних. Найден.';
-                      $result['error'] = true;
-                  }*/
+
                 $n = (array)$xml->DebtorBan->Status;
 
                   if (isset($n) && $n['@attributes']['id'] == 3) {

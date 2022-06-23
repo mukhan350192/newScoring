@@ -38,12 +38,12 @@ class SendXData implements ShouldQueue
     {
         $data = $this->data;
         $iin = $data['iin'];
-        $url = 'https://secure2.1cb.kz/asource/v1/' . strval($iin) . '.xml';
-        $username = '7015382439';
-        $password = '7015382439';
         $result['success'] = false;
-
         do {
+            $url = 'https://secure2.1cb.kz/asource/v1/' . strval($iin) . '.xml';
+            $username = '7015382439';
+            $password = '7015382439';
+
             $http = new Client(['verify' => false]);
             try {
                 $response = $http->get($url, [
@@ -52,11 +52,9 @@ class SendXData implements ShouldQueue
                         $password,
                     ],
                 ]);
-                //$response = $response->getBody()->getContents();
+
                 $xml = simplexml_load_string($response->getBody(), 'SimpleXMLElement', LIBXML_NOCDATA);
 
-
-                $result['error'] = false;
                 if ($xml->TerrorList->Status->id[0] == 1) {
                     $result['message'] = 'Перечень организаций и лиц, связанных с финансированием терроризма и экстремизма. Не найден.';
                     $result['error'] = true;
@@ -80,48 +78,28 @@ class SendXData implements ShouldQueue
                     $result['error'] = true;
                     break;
                 }
-                if ($xml->Dynamics->Dynamic->status->id == 1){
+                if ($xml->Dynamics->Dynamic->status->id == 1) {
                     $result['message'] = 'Информационный сервис. Комитет по правовой статистике и специальным учетам Генеральной прокуратуры Республики Казахстан. Найден';
                     $result['error'] = true;
                     break;
                 }
 
-                /*  if ($xml->Pedophile->Status->id[0] == 1) {
-                      $result['message5'] = 'Сведения о лицах, привлеченные к уголовной отвественности за совершение уголовных правонарушений против половой неприкосновенности несовершеннолетних. Найден.';
-                      $result['error'] = true;
-                  }*/
+                $n = (array)$xml->DebtorBan->Status;
 
+                if (isset($n) && $n['@attributes']['id'] == 3) {
+                    $result['access'] = true;
 
-                /*  $n = (array)$xml->DebtorBan->Status;
-                  if ($n['@attributes']['id'][0] == 3) {
-                      $result['access'] = true;
-
-                  }
-                  if ($n['@attributes']['id'][0] == 1) {
-                      $amount = [];
-                      $newAmount = [];
-                      for ($i = 1; $i < sizeof($xml->DebtorBan->Companies->Company); $i++) {
-                          $a = (array)$xml->DebtorBan->Companies->Company[$i]->RecoveryAmount;
-                          array_push($amount, $a['@attributes']['value']);
-                          $newAmount = array_unique($amount);
-                          array_push($newAmount);
-                      }
-                      $sum = 0;
-                      foreach ($newAmount as $key) {
-                          $sum += $key;
-                      }
-                      if ($sum > 90000) {
-                          $result['error'] = true;
-                          $result['message6'] = 'Сумма взыскании ' . $sum . ' тенге.';
-                      }
-                  }*/
+                }
+                if (isset($n) && $n['@attributes']['id'] == 1) {
+                    $result['error'] = true;
+                    $result['message'] = 'Актуальные сведения из единого реестра должников и временно ограниченных на выезд должников';
+                    break;
+                }
 
 
             } catch (BadResponseException $e) {
                 info($e);
-                print_r($e);
             }
-            // SendXData::dispatch($data)->delay(now()->addSecond(10));
             $result['success'] = true;
         } while (false);
         $leadID = $data['leadID'];
@@ -134,8 +112,12 @@ class SendXData implements ShouldQueue
         if (isset($result['access']) && $result['access'] == true){
             $responseUrl .= 'access=true&message=1';
         }
-
-        $http->get($responseUrl);
+        $s = $http->get($responseUrl);
+        $s = $s->getBody()->getContents();
+        $s = json_encode($s);
+        DB::table('test')->insertGetId([
+           'response' => $s,
+        ]);
         return response()->json($result);
     }
 }
