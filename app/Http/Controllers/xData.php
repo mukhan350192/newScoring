@@ -52,7 +52,7 @@ class xData extends Controller
                 ]);
                 //$response = $response->getBody()->getContents();
                 $xml = simplexml_load_string($response->getBody(), 'SimpleXMLElement', LIBXML_NOCDATA);
-                print_r($xml);
+
                 if ($xml->TerrorList->Status->id[0] == 1) {
                     $result['message'] = 'Перечень организаций и лиц, связанных с финансированием терроризма и экстремизма. Не найден.';
                     $result['error'] = true;
@@ -86,7 +86,7 @@ class xData extends Controller
                       $result['error'] = true;
                   }*/
 
-                print_r((array)$xml->DebtorBan);
+                print_r((array)$xml->DebtorBan->Status['@attributes']);
                 /*  $n = (array)$xml->DebtorBan->Status;
                   if ($n['@attributes']['id'][0] == 3) {
                       $result['access'] = true;
