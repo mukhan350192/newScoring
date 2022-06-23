@@ -86,14 +86,12 @@ class xData extends Controller
                       $result['error'] = true;
                   }*/
                 $n = (array)$xml->DebtorBan->Status;
-                print_r($n['@attributes']['id']);
-                var_dump($n);
-                /*  ;
-                  if ($n['@attributes']['id'][0] == 3) {
+
+                  if ($n['@attributes']['id'] == 3) {
                       $result['access'] = true;
 
                   }
-                  if ($n['@attributes']['id'][0] == 1) {
+                  if ($n['@attributes']['id'] == 1) {
                       $amount = [];
                       $newAmount = [];
                       for ($i = 1; $i < sizeof($xml->DebtorBan->Companies->Company); $i++) {
@@ -110,7 +108,7 @@ class xData extends Controller
                           $result['error'] = true;
                           $result['message6'] = 'Сумма взыскании ' . $sum . ' тенге.';
                       }
-                  }*/
+                  }
 
 
             } catch (BadResponseException $e) {
