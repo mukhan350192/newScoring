@@ -104,7 +104,7 @@ class SendXData implements ShouldQueue
         } while (false);
         $leadID = $data['leadID'];
         $phone = $data['phone'];
-        $responseUrl = 'https://ic24.almait.kz/api/webhock/cronResponse.php?leadID=' . $leadID . '&phone=' . $phone.'&iin=' . $iin . '&';
+        $responseUrl = 'https://icredit-crm.kz/api/webhock/cronResponseTest.php?leadID=' . $leadID . '&phone=' . $phone.'&iin=' . $iin . '&';
         if (isset($result['error']) && $result['error'] == true) {
             $responseUrl .= 'otkazId=10411&message=2';
         }
