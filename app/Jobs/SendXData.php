@@ -115,9 +115,11 @@ class SendXData implements ShouldQueue
         $s = $http->get($responseUrl);
         $s = $s->getBody()->getContents();
         $s = json_encode($s);
+
         DB::table('test')->insertGetId([
            'response' => $responseUrl,
         ]);
+
         return response()->json($result);
     }
 }
