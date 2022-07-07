@@ -243,8 +243,6 @@ class xData extends Controller
     {
         $iin = $request->input('iin');
         $result['success'] = false;
-        var_dump($result);
-        die();
 
         do {
             if (!$iin) {
@@ -256,6 +254,7 @@ class xData extends Controller
                 ->whereDate('created_at', '>=', now()->subDays(30)->setTime(0, 0, 0)->toDateTimeString())
                 ->first();
             var_dump($pdlResult);
+            die();
             if (isset($pdlResult)) {
                 if (isset($pdlResult->model_type) && $pdlResult->model_type == -1) {
                     $result['success'] = true;
