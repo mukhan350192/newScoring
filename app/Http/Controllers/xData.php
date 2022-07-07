@@ -253,9 +253,262 @@ class xData extends Controller
                 ->where('iin', $iin)
                 ->whereDate('created_at', '>=', now()->subDays(30)->setTime(0, 0, 0)->toDateTimeString())
                 ->first();
+            if (isset($pdlResult)) {
+                if (isset($pdlResult->model_type) && $pdlResult->model_type == -1) {
+                    $result['success'] = true;
+                    $result['amount'] = 10000;
+                    $result['access'] = 4;
+                    $result['score'] = 0;
+                    break;
+                }
+                if (isset($pdlResult->model_type) && $pdlResult->model_type == -2) {
+                    $result['success'] = true;
+                    $result['access'] = 5;
+                    $result['data'] = 'Субъект уже в дефолте. Примечание: просрочка 30+ у Провайдера, производящего запрос на PDL ML score';
+                    break;
+                }
+                if (isset($pdlResult->reason_code) && $pdlResult->reason_code == '{"sixty_plus":1}') {
+                    $result['score'] = $pdlResult->score;
+                    $result['access'] = 1;
+                    $result['success'] = true;
+                    $result['reason_code'] = $pdlResult->reason_code;
+                    break;
+                }
+                $score = $pdlResult->score;
+                $default = $pdlResult->default_probability;
+                if (isset($score) && $score >= 590 && intval($default) <= 10) {
+                    $result['score'] = $score;
+                    $result['access'] = 4;
+                    $result['amount'] = 30000;
+                    $result['success'] = true;
+                    break;
+                }
+                if (isset($score) && $score >= 590 && (intval($default) > 10) && intval($default) <= 15) {
+                    $result['score'] = $score;
+                    $result['access'] = 4;
+                    $result['amount'] = 20000;
+                    $result['success'] = true;
+                    break;
+                }
+                if (isset($score) && $score >= 590 && (intval($default) > 15) && intval($default) <= 20) {
+                    $result['score'] = $score;
+                    $result['access'] = 4;
+                    $result['amount'] = 10000;
+                    $result['success'] = true;
+                    break;
+                }
+                if (isset($score) && $score >= 590 && intval($default) > 20) {
+                    $result['score'] = $score;
+                    $result['access'] = 5;
+                    $result['data'] = "PDL_SCORE: $score,default_probability: $default";
+                    $result['success'] = true;
+                    break;
+                }
+                if (isset($score) && $score >= 530 && $score < 590 && intval($default) <= 10) {
+                    $result['score'] = $score;
+                    $result['access'] = 4;
+                    $result['amount'] = 20000;
+                    $result['success'] = true;
+                    break;
+                }
+                if (isset($score) && $score >= 530 && $score < 590 && intval($default) > 10 && intval($default) < 15) {
+                    $result['score'] = $score;
+                    $result['access'] = 4;
+                    $result['amount'] = 15000;
+                    $result['success'] = true;
+                    break;
+                }
+                if (isset($score) && $score >= 530 && $score < 590 && intval($default) > 15 && intval($default) < 20) {
+                    $result['score'] = $score;
+                    $result['access'] = 4;
+                    $result['amount'] = 10000;
+                    $result['success'] = true;
+                    break;
+                }
+                if (isset($score) && $score >= 530 && $score < 590 && intval($default) > 20) {
+                    $result['access'] = 5;
+                    $result['score'] = $score;
+                    $result['data'] = "PDL SCORE: $score, default: $default";
+                    $result['success'] = true;
+                    break;
+                }
+                if (isset($score) && $score < 530 && intval($default) <= 10) {
+                    $result['score'] = $score;
+                    $result['access'] = 4;
+                    $result['amount'] = 10000;
+                    $result['success'] = true;
+                    break;
+                }
+                if (isset($score) && $score < 530 && intval($default) > 10) {
+                    $result['access'] = 5;
+                    $result['score'] = $score;
+                    $result['data'] = "PDL SCORE: $score, default: $default";
+                    $result['success'] = true;
+                    break;
+                }
+                break;
+            }
+            $url = 'https://secure2.1cb.kz/pdl/api/v1/' . $iin;
+            $username = 7017424940;
+            $password = 'Crjhbyu8901';
+            $http = new Client(['verify' => false]);
+            $response = $http->post($url, [
+                'headers' => [
+                    'Authorization' => 'Basic ' . base64_encode($username . ':' . $password),
+                    'Content-Type' => 'application/json',
+                    'Accept' => 'application/json',
+                    'Consent-Confirmed' => 1,
+                ]
+            ]);
+            $response = $response->getBody()->getContents();
+            $response = json_decode($response, true);
 
-            //var_dump($pdlResult);
+            if (isset($response['status']) && $response['status'] == -2001) {
+                $result['message'] = 'Неверный формат ИИН';
+                break;
+            }
+            if (isset($response['status']) && $response['status'] == -9) {
+                $result['message'] = 'Неверный формат ИИН';
+                break;
+            }
+            if (isset($response['status']) && $response['status'] == -2) {
+                DB::table('pdl')->insertGetId([
+                    'model_type' => -2,
+                    'pdl_id' => $response['id'],
+                    'iin' => $iin,
+                    'score' => 0,
+                    'created_at' => Carbon::now(),
+                    'updated_at' => Carbon::now(),
+                ]);
+                $result['access'] = 5;
+                $result['data'] = 'Субъект уже в дефолте. Примечание: просрочка 30+ у Провайдера, производящего запрос на PDL ML score';
+                $result['success'] = true;
+                break;
+            }
+            if (isset($response['status']) && $response['status'] == -1) {
+                DB::table('pdl')->insertGetId([
+                    'model_type' => -1,
+                    'pdl_id' => $response['id'],
+                    'iin' => $iin,
+                    'score' => 0,
+                    'created_at' => Carbon::now(),
+                    'updated_at' => Carbon::now(),
+                ]);
+                $result['access'] = 4;
+                $result['success'] = true;
+                $result['amount'] = 10000;
+                break;
+            }
 
+            $score = $response['score'];
+            $default = $response['default_probability'];
+            $model_type = $response['model_type'];
+
+            $model_type_version = $response['model_version'];
+            $defaultRange = $response['default_probability_range'];
+            $risk_grade = $response['risk_grade'];
+            $reason_code = $response['reason_code'];
+
+            DB::table('pdl')->insertGetId([
+                'pdl_id' => $response['id'],
+                'iin' => $iin,
+                'model_type' => $model_type,
+                'model_type_version' => $model_type_version,
+                'default_probability' => $default,
+                'default_probability_range' => $defaultRange,
+                'risk_grade' => $risk_grade,
+                'score' => $score,
+                'reason_code' => json_encode($reason_code),
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ]);
+
+            if ($reason_code == '{"sixty_plus":1}') {
+                $result['score'] = $pdlResult->score;
+                $result['access'] = 1;
+                $result['success'] = true;
+                $result['reason_code'] = $pdlResult->reason_code;
+                break;
+            }
+            if (isset($score) && $score >= 590 && intval($default) <= 10) {
+                $result['score'] = $score;
+                $result['access'] = 4;
+                $result['amount'] = 30000;
+                $result['success'] = true;
+                break;
+            }
+
+            if (isset($score) && $score >= 590 && (intval($default) > 10) && intval($default) <= 15) {
+                $result['score'] = $score;
+                $result['access'] = 4;
+                $result['amount'] = 20000;
+                $result['success'] = true;
+                break;
+            }
+
+            if (isset($score) && $score >= 590 && (intval($default) > 15) && intval($default) <= 20) {
+                $result['score'] = $score;
+                $result['access'] = 4;
+                $result['amount'] = 10000;
+                $result['success'] = true;
+                break;
+            }
+
+            if (isset($score) && $score >= 590 && intval($default) > 20) {
+                $result['score'] = $score;
+                $result['access'] = 5;
+                $result['data'] = "PDL_SCORE: $score,default_probability: $default";
+                $result['success'] = true;
+                break;
+            }
+
+            if (isset($score) && $score >= 530 && $score < 590 && intval($default) <= 10) {
+                $result['score'] = $score;
+                $result['access'] = 4;
+                $result['amount'] = 20000;
+                $result['success'] = true;
+                break;
+            }
+
+            if (isset($score) && $score >= 530 && $score < 590 && intval($default) > 10 && intval($default) < 15) {
+                $result['score'] = $score;
+                $result['access'] = 4;
+                $result['amount'] = 15000;
+                $result['success'] = true;
+                break;
+            }
+
+            if (isset($score) && $score >= 530 && $score < 590 && intval($default) > 15 && intval($default) < 20) {
+                $result['score'] = $score;
+                $result['access'] = 4;
+                $result['amount'] = 10000;
+                $result['success'] = true;
+                break;
+            }
+
+            if (isset($score) && $score >= 530 && $score < 590 && intval($default) > 20) {
+                $result['access'] = 5;
+                $result['score'] = $score;
+                $result['data'] = "PDL SCORE: $score, default: $default";
+                $result['success'] = true;
+                break;
+            }
+
+            if (isset($score) && $score < 530 && intval($default) <= 10) {
+                $result['score'] = $score;
+                $result['access'] = 4;
+                $result['amount'] = 10000;
+                $result['success'] = true;
+                break;
+            }
+
+            if (isset($score) && $score < 530 && intval($default) > 10) {
+                $result['access'] = 5;
+                $result['score'] = $score;
+                $result['data'] = "PDL SCORE: $score, default: $default";
+                $result['success'] = true;
+                break;
+            }
 
         } while (false);
         return response()->json($result);
