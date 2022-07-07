@@ -243,6 +243,8 @@ class xData extends Controller
     {
         $iin = $request->input('iin');
         $result['success'] = false;
+        var_dump($result);
+        die();
 
         do {
             if (!$iin) {
