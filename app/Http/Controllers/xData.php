@@ -253,6 +253,7 @@ class xData extends Controller
                 ->where('iin', $iin)
                 ->whereDate('created_at', '>=', now()->subDays(30)->setTime(0, 0, 0)->toDateTimeString())
                 ->first();
+            var_dump($pdlResult);
             if (isset($pdlResult)) {
                 if (isset($pdlResult->model_type) && $pdlResult->model_type == -1) {
                     $result['success'] = true;
