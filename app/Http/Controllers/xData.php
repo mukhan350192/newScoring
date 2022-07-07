@@ -249,11 +249,12 @@ class xData extends Controller
                 $result['message'] = 'Не передан ИИН';
                 break;
             }
-            $pdlResult = DB::table('pdl')
+           /* $pdlResult = DB::table('pdl')
                 ->where('iin', $iin)
                 ->whereDate('created_at', '>=', now()->subDays(30)->setTime(0, 0, 0)->toDateTimeString())
                 ->first();
-            var_dump($pdlResult);
+           */
+            //var_dump($pdlResult);
 
 
         } while (false);
