@@ -25,22 +25,9 @@ class xData extends Controller
         $iin = $request->input('iin');
         $result['success'] = false;
         do {
-            if (!$leadID) {
-                $result['message'] = 'Не передан лид айди';
-                break;
-            }
-            if (!$phone) {
-                break;
-            }
-            if (!$iin) {
-                break;
-            }
-
             $url = 'https://secure2.1cb.kz/asource/v1/' . strval($iin) . '.xml';
             $username = '7015382439';
             $password = '7015382439';
-            $result['success'] = false;
-
 
             $http = new Client(['verify' => false]);
             try {
@@ -50,7 +37,7 @@ class xData extends Controller
                         $password,
                     ],
                 ]);
-                //$response = $response->getBody()->getContents();
+
                 $xml = simplexml_load_string($response->getBody(), 'SimpleXMLElement', LIBXML_NOCDATA);
 
                 if ($xml->TerrorList->Status->id[0] == 1) {
@@ -84,24 +71,21 @@ class xData extends Controller
 
                 $n = (array)$xml->DebtorBan->Status;
 
-                  if (isset($n) && $n['@attributes']['id'] == 3) {
-                      $result['access'] = true;
+                if (isset($n['@attributes']) && $n['@attributes']['id'] == 3) {
+                    $result['access'] = true;
 
-                  }
-                  if (isset($n) && $n['@attributes']['id'] == 1) {
-                      $result['error'] = true;
-                      $result['message'] = 'Актуальные сведения из единого реестра должников и временно ограниченных на выезд должников';
-                      break;
-                  }
+                }
+                if (isset($n['@attributes']) && $n['@attributes']['id'] == 1) {
+                    $result['error'] = true;
+                    $result['message'] = 'Актуальные сведения из единого реестра должников и временно ограниченных на выезд должников';
+                    break;
+                }
 
 
             } catch (BadResponseException $e) {
                 info($e);
-                print_r($e);
             }
-            // SendXData::dispatch($data)->delay(now()->addSecond(10));
             $result['success'] = true;
-
         } while (false);
 
         return response()->json($result);
