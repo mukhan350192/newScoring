@@ -560,8 +560,8 @@ class xData extends Controller
             $url = "https://dss-kz.garnet24.com/v1/api/lien/score";
 
             $headers = [
-                'Content-Type: application/json',
-                'X-Auth-Token: c61d5fad-e017-48e0-b804-16b33f7242bf',
+                'Content-Type' => 'application/json',
+                'X-Auth-Token' => 'c61d5fad-e017-48e0-b804-16b33f7242bf',
             ];
 
 
