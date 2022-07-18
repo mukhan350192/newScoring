@@ -557,7 +557,7 @@ class xData extends Controller
                 break;
             }
 
-            $url = "https://dss-kz.garnet24.com/v1/api/lien/score";
+            $url = "https://dss-kz.garnet24.com/v1/lien/score";
 
             $headers = [
                 'Content-Type' => 'application/json',
