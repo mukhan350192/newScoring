@@ -497,4 +497,129 @@ class xData extends Controller
         } while (false);
         return response()->json($result);
     }
+
+
+    public function testGarnet(Request $request){
+        $firstName = $request->input('firstName');
+        $lastName = $request->input('lastName');
+        $middleName = $request->input('middleName');
+        $iin = $request->input('iin');
+        $docNumber = $request->input('docNumber');
+        $docIssued = $request->input('docIssued');
+        $numLoans = $request->input('numLoans');
+        $email = $request->input('email');
+        $mobilePhone = $request->input('mobilePhone');
+        $jobCompanyName = $request->input('jobCompanyName');
+        $requestedLoanTerm = $request->input('requestedLoanTerm');
+        $requestedLoanAmount = $request->input('requestedLoanAmount');
+        $income = $request->input('income');
+        $result['success'] = false;
+        do{
+            if (!$firstName) {
+                $result['message'] = 'Не передано имя';
+                break;
+            }
+            if (!$lastName) {
+                $result['message'] = 'Не передана фамилия';
+                break;
+            }
+            if (!$middleName) {
+                $result['message'] = 'Не передано отчество';
+                break;
+            }
+            if (!$iin) {
+                $result['message'] = 'Не передан иин';
+                break;
+            }
+            if (!$docNumber) {
+                $result['message'] = 'Не передан номер документа';
+                break;
+            }
+            if (!$docIssued) {
+                $result['message'] = 'Не передана дата получения документа';
+                break;
+            }
+            if (!$email) {
+                $result['message'] = 'Не передана почта';
+                break;
+            }
+            if (!$mobilePhone) {
+                $result['message'] = 'Не передан номер телефона';
+                break;
+            }
+
+            if (!$requestedLoanTerm) {
+                $result['message'] = 'Не передан срок займа';
+                break;
+            }
+            if (!$requestedLoanAmount) {
+                $result['message'] = 'Не передан сумма займа';
+                break;
+            }
+
+            $url = "https://dss-kz.garnet24.com/v1/api/lien/score";
+
+            $headers = [];
+            $headers[] = 'Content-Type: application/json';
+            $headers[] = "X-Auth-Token: c61d5fad-e017-48e0-b804-16b33f7242bf";
+
+            if(substr($iin, 6 , 1) == 1 || substr($iin, 6 , 1) == 2){
+                $birthDate = '18'.substr($iin, 0 , 2).'-'.substr($iin, 2 , 2).'-'.substr($iin, 4 , 2);
+            }
+            elseif(substr($iin, 6 , 1) == 3 || substr($iin, 6 , 1) == 4){
+                $birthDate = '19'.substr($iin, 0 , 2).'-'.substr($iin, 2 , 2).'-'.substr($iin, 4 , 2);
+            }
+            elseif(substr($iin, 6 , 1) == 5 || substr($iin, 6 , 1) == 6){
+                $birthDate = '20'.substr($iin, 0 , 2).'-'.substr($iin, 2 , 2).'-'.substr($iin, 4 , 2);
+            }
+            else{
+                $result['message'] = 'Некорректный иин';
+                break;
+            }
+
+
+            $firstName = mb_strtolower($firstName);
+            $lastName = mb_strtolower($lastName);
+            $middleName = mb_strtolower($middleName);
+
+            $nspdob_hash_string = $firstName.$lastName.$middleName.$birthDate;
+            $nspdob_hash = md5($nspdob_hash_string);
+
+            $doc_hash_string = $docNumber.$docIssued;
+            $doc_hash = md5($doc_hash_string);
+
+
+            $data = [
+                'application' => [
+                    'app_id' => 1,
+                    'app_created_at' => '2022-07-11',
+                    'app_type' => 'web',
+                    'nspdob_hash' => $nspdob_hash,
+                    //'income' => $income,
+                    'tax_number' => $iin,
+                    'document_type' => 'identity card',
+                    'doc_hash' => $doc_hash,
+                    'email' => $email,
+                    'mobile_phone' => $mobilePhone,
+                    //'job_company_name' => $jobCompanyName,
+                    'requested_loan_term' => $requestedLoanTerm,
+                    'requested_loan_amount' => $requestedLoanAmount,
+                    'requested_loan_type' => 'PDL'
+                ],
+                /*'internal' => [
+                    'num_loans' => $numLoans
+                ]*/
+            ];
+            $data = json_encode($data);
+            $http = new Client(['verify' => false]);
+            $response = $http->post($url,[
+                'headers' => $headers,
+                'body' => $data,
+            ]);
+
+            print_r($response->getBody()->getContents());
+
+        }while(false);
+        return response()->json($result);
+    }
 }
