@@ -559,9 +559,11 @@ class xData extends Controller
 
             $url = "https://dss-kz.garnet24.com/v1/api/lien/score";
 
-            $headers = [];
-            $headers[] = 'Content-Type: application/json';
-            $headers[] = "X-Auth-Token: c61d5fad-e017-48e0-b804-16b33f7242bf";
+            $headers = [
+                'Content-Type: application/json',
+                'X-Auth-Token: c61d5fad-e017-48e0-b804-16b33f7242bf',
+            ];
+
 
             if(substr($iin, 6 , 1) == 1 || substr($iin, 6 , 1) == 2){
                 $birthDate = '18'.substr($iin, 0 , 2).'-'.substr($iin, 2 , 2).'-'.substr($iin, 4 , 2);
