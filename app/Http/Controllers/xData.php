@@ -855,7 +855,8 @@ class xData extends Controller
 
             $doc_hash_string = $docNumber . $docIssued;
             $doc_hash = md5($doc_hash_string);
-            $app_id = sha1($nspdob_hash . time());
+            $appID = DB::table('garnet')->select('id')->orderByDesc('id')->first();
+            $app_id = $appID->id;
 
             $data = [
                 'application' => [
@@ -870,8 +871,8 @@ class xData extends Controller
                     'email' => $email,
                     'mobile_phone' => $mobilePhone,
                     //'job_company_name' => $jobCompanyName,
-                    'requested_loan_term' => $requestedLoanTerm,
-                    'requested_loan_amount' => $requestedLoanAmount,
+                    'requested_loan_term' => intval($requestedLoanTerm),
+                    'requested_loan_amount' => intval($requestedLoanAmount),
                     'requested_loan_type' => 'PDL'
                 ],
                 /*'internal' => [
