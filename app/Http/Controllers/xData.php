@@ -856,7 +856,11 @@ class xData extends Controller
             $doc_hash_string = $docNumber . $docIssued;
             $doc_hash = md5($doc_hash_string);
             $appID = DB::table('garnet')->select('id')->orderByDesc('id')->first();
-            $app_id = $appID->id;
+            if (!$appID){
+                $app_id = 1;
+            }else{
+                $app_id = $appID->id;
+            }
 
             $data = [
                 'application' => [
