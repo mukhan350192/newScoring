@@ -70,7 +70,7 @@ class xData extends Controller
                 }
 
                 $n = (array)$xml->DebtorBan->Status;
-
+                var_dump($n);
                 if (isset($n['@attributes']) && $n['@attributes']['id'] == 3) {
                     $result['access'] = true;
 
