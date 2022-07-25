@@ -77,7 +77,7 @@ class xData extends Controller
                 }
                 if (isset($n['@attributes']) && $n['@attributes']['id'] == 1) {
                     $s = (array)$xml->DebtorBan['Companies'];
-                    print_r($s[1]);
+                    print_r($s);
                     for ($i = 1; $i<count($s);$i++){
                        print_r($s[$i]);
                        break;
