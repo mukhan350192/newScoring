@@ -76,7 +76,7 @@ class xData extends Controller
 
                 }
                 if (isset($n['@attributes']) && $n['@attributes']['id'] == 1) {
-                    $s = (array)$xml->DebtorBan->Companies->Company;
+                    $s = (array)$xml->DebtorBan->Companies;
                     print_r($s);
                     echo count($s);
                     $result['error'] = true;
