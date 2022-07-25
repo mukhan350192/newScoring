@@ -69,14 +69,18 @@ class xData extends Controller
                     break;
                 }
 
-                $n = (array)$xml->DebtorBan;
-                var_dump(count($n['Companies']));
-                break;
+                $n = (array)$xml->DebtorBan->Status;
+
                 if (isset($n['@attributes']) && $n['@attributes']['id'] == 3) {
                     $result['access'] = true;
 
                 }
                 if (isset($n['@attributes']) && $n['@attributes']['id'] == 1) {
+                    $s = (array)$xml->DebtorBan['Companies'];
+                    for ($i = 1; $i<count($s);$i++){
+                       print_r($s[$i]);
+                       break;
+                    }
                     $result['error'] = true;
                     $result['message'] = 'Актуальные сведения из единого реестра должников и временно ограниченных на выезд должников';
                     break;
