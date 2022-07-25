@@ -77,11 +77,21 @@ class xData extends Controller
                 }
                 if (isset($n['@attributes']) && $n['@attributes']['id'] == 1) {
                     $s = (array)$xml->DebtorBan->Companies;
-                    print_r($s['Company']);
-                    echo count($s);
-                    $result['error'] = true;
-                    $result['message'] = 'Актуальные сведения из единого реестра должников и временно ограниченных на выезд должников';
-                    break;
+                    $count = count($s['Company']);
+                    $t = $s['Company'];
+                    $total = 0;
+                    for ($i = 1; $i < sizeof($xml->DebtorBan->Companies->Company); $i++) {
+                        $amount = (array)$xml->DebtorBan->Companies->Company[$i]->RecoveryAmount['@attributes']['value'];
+                        $code = (array)$xml->DebtorBan->Companies->Company[$i]->ProductionProgress['@attributes']['value'];
+                        if ($code == '-'){
+                            $total = $total+$amount;
+                        }
+                    }
+                    if ($total > 20000){
+                        $result['error'] = true;
+                        $result['message'] = 'Актуальные сведения из единого реестра должников и временно ограниченных на выезд должников';
+                        break;
+                    }
                 }
 
 
