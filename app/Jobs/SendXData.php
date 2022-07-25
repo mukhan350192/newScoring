@@ -91,9 +91,21 @@ class SendXData implements ShouldQueue
 
                 }
                 if (isset($n['@attributes']) && $n['@attributes']['id'] == 1) {
-                    $result['error'] = true;
-                    $result['message'] = 'Актуальные сведения из единого реестра должников и временно ограниченных на выезд должников';
-                    break;
+                    $total = 0;
+                    for ($i = 1; $i < sizeof($xml->DebtorBan->Companies->Company); $i++) {
+                        $amount = (array)$xml->DebtorBan->Companies->Company[$i]->RecoveryAmount;
+                        $amount = $amount['@attributes']['value'];
+                        $code = (array)$xml->DebtorBan->Companies->Company[$i]->ProductionProgress;
+                        $code = $code['@attributes']['value'];
+                        if ($code == '-'){
+                            $total = $total+$amount;
+                        }
+                    }
+                    if ($total > 20000){
+                        $result['error'] = true;
+                        $result['message'] = 'Актуальные сведения из единого реестра должников и временно ограниченных на выезд должников';
+                        break;
+                    }
                 }
 
 
