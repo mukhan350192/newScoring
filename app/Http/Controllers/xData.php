@@ -77,7 +77,7 @@ class xData extends Controller
                 }
                 if (isset($n['@attributes']) && $n['@attributes']['id'] == 1) {
                     $s = (array)$xml->DebtorBan->Companies;
-                    print_r($s);
+                    print_r($s['Company']);
                     echo count($s);
                     $result['error'] = true;
                     $result['message'] = 'Актуальные сведения из единого реестра должников и временно ограниченных на выезд должников';
