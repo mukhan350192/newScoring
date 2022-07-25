@@ -81,8 +81,10 @@ class xData extends Controller
                     $t = $s['Company'];
                     $total = 0;
                     for ($i = 1; $i < sizeof($xml->DebtorBan->Companies->Company); $i++) {
-                        $amount = (array)$xml->DebtorBan->Companies->Company[$i]->RecoveryAmount['@attributes']['value'];
-                        $code = (array)$xml->DebtorBan->Companies->Company[$i]->ProductionProgress['@attributes']['value'];
+                        $amount = (array)$xml->DebtorBan->Companies->Company[$i]->RecoveryAmount;
+                        $amount = $amount['@attributes']['value'];
+                        $code = (array)$xml->DebtorBan->Companies->Company[$i]->ProductionProgress;
+                        $code = $code['@attributes']['value'];
                         if ($code == '-'){
                             $total = $total+$amount;
                         }
