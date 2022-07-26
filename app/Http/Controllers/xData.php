@@ -1054,8 +1054,8 @@ class xData extends Controller
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ]);
-            print_r($reason_code);
-            if ($reason_code == '{"sixty_plus":1}') {
+
+            if (json_encode($reason_code) == '{"sixty_plus":1}') {
                 $result['score'] = $score;
                 $result['access'] = 1;
                 $result['status'] = 1;
