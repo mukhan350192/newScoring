@@ -1064,7 +1064,7 @@ class xData extends Controller
                 break;
             }
         }while(false);
-        if ($result['access'] != 1){
+        if (isset($resutl['access']) && $result['access'] != 1){
             $garnet = $this->testGarnet($firstName,$lastName,$middleName,$iin,$docNumber,$docIssued,$email,$mobilePhone,$requestedLoanTerm,$requestedLoanAmount,$leadID);
             if ($garnet){
                 $result['access'] = 4;
