@@ -927,4 +927,152 @@ class xData extends Controller
         } while (false);
         return false;
     }
+
+    public function pdlGarnet(Request $request){
+        $iin = $request->input('iin');
+        $leadID = $request->input('leadID');
+        $firstName = $request->input('firstName');
+        $lastName = $request->input('lastName');
+        $middleName = $request->input('middleName');
+        $docNumber = $request->input('docNumber');
+        $docIssued = $request->input('docIssued');
+        $email = $request->input('email');
+        $mobilePhone = $request->input('mobilePhone');
+        $requestedLoanTerm = $request->input('requestedLoanTerm');
+        $requestedLoanAmount = $request->input('requestedLoanAmount');
+        $result['success'] = false;
+        $result['decision'] = 'pdl';
+        do{
+            if (!$iin){
+                $result['message'] = 'Не передан иин';
+                break;
+            }
+            if (!$leadID){
+                $result['message'] = 'Не передан лид';
+                break;
+            }
+            if (!$firstName){
+                $result['message'] = 'Не передан имя';
+                break;
+            }
+            if (!$lastName){
+                $result['message'] = 'Не передан фамилия';
+                break;
+            }
+            if (!$docNumber){
+                $result['message'] = 'Не передан номер документа';
+                break;
+            }
+            if (!$docIssued){
+                $result['message'] = 'Не передан дата выдачи уд лич';
+                break;
+            }
+            if (!$mobilePhone){
+                $result['message'] = 'Не передан номер телефона';
+                break;
+            }
+            if (!$requestedLoanAmount){
+                $result['message'] = 'Не передан сумма запроса';
+                break;
+            }
+            if (!$requestedLoanTerm){
+                $result['message'] = 'Не передан срок';
+                break;
+            }
+            $url = 'https://secure2.1cb.kz/pdl/api/v1/' . $iin;
+            $username = 7017424940;
+            $password = 'Crjhbyu8901';
+            $http = new Client(['verify' => false]);
+            $response = $http->post($url, [
+                'headers' => [
+                    'Authorization' => 'Basic ' . base64_encode($username . ':' . $password),
+                    'Content-Type' => 'application/json',
+                    'Accept' => 'application/json',
+                    'Consent-Confirmed' => 1,
+                ]
+            ]);
+            $response = $response->getBody()->getContents();
+            $response = json_decode($response, true);
+
+            if (isset($response['status']) && $response['status'] == -2001) {
+                $result['message'] = 'Неверный формат ИИН';
+                break;
+            }
+            if (isset($response['status']) && $response['status'] == -9) {
+                $result['message'] = 'Неверный формат ИИН';
+                break;
+            }
+            if (isset($response['status']) && $response['status'] == -2) {
+                DB::table('pdl')->insertGetId([
+                    'model_type' => -2,
+                    'pdl_id' => $response['id'],
+                    'iin' => $iin,
+                    'score' => 0,
+                    'created_at' => Carbon::now(),
+                    'updated_at' => Carbon::now(),
+                ]);
+                $result['access'] = 5;
+                $result['data'] = 'Субъект уже в дефолте. Примечание: просрочка 30+ у Провайдера, производящего запрос на PDL ML score';
+                $result['success'] = true;
+                break;
+            }
+            if (isset($response['status']) && $response['status'] == -1) {
+                DB::table('pdl')->insertGetId([
+                    'model_type' => -1,
+                    'pdl_id' => $response['id'],
+                    'iin' => $iin,
+                    'score' => 0,
+                    'created_at' => Carbon::now(),
+                    'updated_at' => Carbon::now(),
+                ]);
+                $result['status'] = 1;
+                $result['access'] = 4;
+                $result['success'] = true;
+                $result['amount'] = 10000;
+                break;
+            }
+
+            $score = $response['score'];
+            $default = $response['default_probability'];
+            $model_type = $response['model_type'];
+
+            $model_type_version = $response['model_version'];
+            $defaultRange = $response['default_probability_range'];
+            $risk_grade = $response['risk_grade'];
+            $reason_code = $response['reason_code'];
+
+            DB::table('pdl')->insertGetId([
+                'pdl_id' => $response['id'],
+                'iin' => $iin,
+                'model_type' => $model_type,
+                'model_type_version' => $model_type_version,
+                'default_probability' => $default,
+                'default_probability_range' => $defaultRange,
+                'risk_grade' => $risk_grade,
+                'score' => $score,
+                'reason_code' => json_encode($reason_code),
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ]);
+
+            if ($reason_code == '{"sixty_plus":1}') {
+                $result['score'] = $score;
+                $result['access'] = 1;
+                $result['status'] = 1;
+                $result['success'] = true;
+                $result['reason_code'] = $reason_code;
+                break;
+            }
+        }while(false);
+        if ($result['access'] != 1){
+            $garnet = $this->testGarnet($firstName,$lastName,$middleName,$iin,$docNumber,$docIssued,$email,$mobilePhone,$requestedLoanTerm,$requestedLoanAmount,$leadID);
+            if ($garnet){
+                $result['access'] = 4;
+                $result['success'] = true;
+                $result['decision'] = 'garnet';
+                $result['amount'] = 20000;
+            }
+        }
+        return response()->json($result);
+    }
 }
