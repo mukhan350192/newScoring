@@ -89,6 +89,7 @@ class xData extends Controller
                             $total = $total+$amount;
                         }
                     }
+                    print_r($total);
                     if ($total > 20000){
                         $result['error'] = true;
                         $result['message'] = 'Актуальные сведения из единого реестра должников и временно ограниченных на выезд должников';
