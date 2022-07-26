@@ -84,6 +84,7 @@ class xData extends Controller
                         $amount = $amount['@attributes']['value'];
                         $code = (array)$xml->DebtorBan->Companies->Company[$i]->ProductionProgress;
                         $code = $code['@attributes']['value'];
+                        echo $code." ".$amount;
                         if ($code == '-'){
                             $total = $total+$amount;
                         }
