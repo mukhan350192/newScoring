@@ -803,6 +803,10 @@ class xData extends Controller
                 $result['access'] = 4;
                 $result['success'] = true;
                 $result['decision'] = 'garnet';
+            }else{
+                $result['access'] = 5;
+                $result['success'] = true;
+                $result['decision'] = 'garnet';
             }
         }
         return response()->json($result);
@@ -1071,6 +1075,10 @@ class xData extends Controller
                 $result['success'] = true;
                 $result['decision'] = 'garnet';
                 $result['amount'] = 20000;
+            }else{
+                $result['access'] = 5;
+                $result['success'] = true;
+                $result['decision'] = 'garnet';
             }
         }
         return response()->json($result);
