@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\GarnetQueue;
 use App\Jobs\SendXData;
 use App\Jobs\test;
 use App\Models\c;
@@ -234,6 +235,27 @@ class xData extends Controller
                 'leadID' => $leadID,
             ];
             SendXData::dispatch($data);
+            $result['success'] = true;
+        } while (false);
+        return response()->json($result);
+    }
+
+    public function garnetQueue(Request $request){
+        $iin = $request->input('iin');
+        $phone = $request->input('phone');
+        $leadID = $request->input('leadID');
+        $result['success'] = false;
+        do {
+            if (!$iin) {
+                $result['message'] = 'Не передан иин';
+                break;
+            }
+            $data = [
+                'iin' => $iin,
+                'phone' => $phone,
+                'leadID' => $leadID,
+            ];
+            GarnetQueue::dispatch($data);
             $result['success'] = true;
         } while (false);
         return response()->json($result);
