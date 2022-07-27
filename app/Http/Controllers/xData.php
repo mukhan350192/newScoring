@@ -931,10 +931,10 @@ class xData extends Controller
                 'headers' => $headers,
                 'body' => $data,
             ]);
-
+            print_r($data);
             $response = $response->getBody()->getContents();
-            $response = json_decode($response, true);
             var_dump($response);
+            $response = json_decode($response, true);
             $decision = $response['decision'];
             $score = $response['score'];
             $msg = $response['msg'];
