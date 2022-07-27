@@ -934,6 +934,7 @@ class xData extends Controller
 
             $response = $response->getBody()->getContents();
             $response = json_decode($response, true);
+            var_dump($response);
             $decision = $response['decision'];
             $score = $response['score'];
             $msg = $response['msg'];
@@ -950,6 +951,7 @@ class xData extends Controller
             if (isset($response) && $response['decision'] == 1) {
                 return true;
             }
+            return false;
         } while (false);
         return false;
     }
@@ -1094,8 +1096,7 @@ class xData extends Controller
 
         if (isset($result['access']) && $result['access'] == 6){
             $garnet = $this->testGarnet($firstName,$lastName,$middleName,$iin,$docNumber,$docIssued,$email,$mobilePhone,$requestedLoanTerm,$requestedLoanAmount,$leadID);
-            print_r($garnet);
-            echo 'testtest';
+            var_dump($garnet);
             if ($garnet){
                 $result['access'] = 4;
                 $result['success'] = true;
