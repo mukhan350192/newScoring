@@ -1101,6 +1101,7 @@ class xData extends Controller
                 $result['access'] = 5;
                 $result['success'] = true;
                 $result['decision'] = 'garnet';
+                $result['data'] = 'Отказ по гарнету';
             }
         }
         return response()->json($result);
