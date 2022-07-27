@@ -909,7 +909,7 @@ class xData extends Controller
             }else{
                 $app_id = $appID->id;
             }
-            $app_id = time();
+
             $data = [
                 'application' => [
                     'app_id' => $app_id,
