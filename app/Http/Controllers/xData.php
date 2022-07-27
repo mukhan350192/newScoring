@@ -840,34 +840,40 @@ class xData extends Controller
         $result['success'] = false;
         do {
             if (!$firstName) {
+                $result['message'] = 'Не передан имя';
                 break;
             }
             if (!$lastName) {
-                break;
-            }
-            if (!$middleName) {
+                $result['message'] = 'Не передан фамилия';
                 break;
             }
             if (!$iin) {
+                $result['message'] = 'Не передан ИИН';
                 break;
             }
             if (!$docNumber) {
+                $result['message'] = 'Не передан номер документа';
                 break;
             }
             if (!$docIssued) {
+                $result['message'] = 'Не передан дата выдачи уд лич';
                 break;
             }
             if (!$email) {
+                $result['message'] = 'Не передан почта';
                 break;
             }
             if (!$mobilePhone) {
+                $result['message'] = 'Не передан телефон';
                 break;
             }
 
             if (!$requestedLoanTerm) {
+                $result['message'] = 'Не передан сумма';
                 break;
             }
             if (!$requestedLoanAmount) {
+                $result['message'] = 'Не передан период';
                 break;
             }
 
