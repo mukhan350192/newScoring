@@ -1096,8 +1096,8 @@ class xData extends Controller
 
         if (isset($result['access']) && $result['access'] == 6){
             $garnet = $this->testGarnet($firstName,$lastName,$middleName,$iin,$docNumber,$docIssued,$email,$mobilePhone,$requestedLoanTerm,$requestedLoanAmount,$leadID);
-            var_dump($garnet);
-            if ($garnet){
+            $garnet = json_decode($garnet);
+            if ($garnet->decision == 1){
                 $result['access'] = 4;
                 $result['success'] = true;
                 $result['decision'] = 'garnet';
