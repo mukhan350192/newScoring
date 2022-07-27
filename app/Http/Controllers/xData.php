@@ -954,10 +954,10 @@ class xData extends Controller
                'updated_at' => Carbon::now(),
             ]);
             if (isset($response) && $response['decision'] == 1) {
-              return false;
+              return true;
             }
         } while (false);
-        return true;
+        return false;
     }
 
     public function pdlGarnet(Request $request){
