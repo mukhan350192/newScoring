@@ -956,6 +956,7 @@ class xData extends Controller
             ]);
             if (isset($response) && $response['decision'] == 1) {
                $result['decision'] = 1;
+               break;
             }
             $result['decision'] = 2;
         } while (false);
