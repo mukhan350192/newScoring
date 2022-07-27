@@ -903,12 +903,12 @@ class xData extends Controller
 
             $doc_hash_string = $docNumber . $docIssued;
             $doc_hash = md5($doc_hash_string);
-            /*$appID = DB::table('garnet')->select('id')->orderByDesc('id')->first();
+            $appID = DB::table('garnet')->select('id')->orderByDesc('id')->first();
             if (!$appID){
                 $app_id = 1;
             }else{
                 $app_id = $appID->id;
-            }*/
+            }
             $app_id = time();
             $data = [
                 'application' => [
@@ -943,7 +943,7 @@ class xData extends Controller
             $decision = $response['decision'];
             $score = $response['score'];
             $msg = $response['msg'];
-           /* DB::table('garnet')->insertGetId([
+            DB::table('garnet')->insertGetId([
                'leadID' => $leadID,
                'iin' => $iin,
                'app_id' => $app_id,
@@ -952,7 +952,7 @@ class xData extends Controller
                'msg' => $msg,
                'created_at' => Carbon::now(),
                'updated_at' => Carbon::now(),
-            ]);*/
+            ]);
             if (isset($response) && $response['decision'] == 1) {
               return false;
             }
