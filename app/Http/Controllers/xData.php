@@ -903,13 +903,13 @@ class xData extends Controller
 
             $doc_hash_string = $docNumber . $docIssued;
             $doc_hash = md5($doc_hash_string);
-            $appID = DB::table('garnet')->select('id')->orderByDesc('id')->first();
+            /*$appID = DB::table('garnet')->select('id')->orderByDesc('id')->first();
             if (!$appID){
                 $app_id = 1;
             }else{
                 $app_id = $appID->id;
-            }
-
+            }*/
+            $app_id = time();
             $data = [
                 'application' => [
                     'app_id' => $app_id,
@@ -937,14 +937,13 @@ class xData extends Controller
                 'headers' => $headers,
                 'body' => $data,
             ]);
-            print_r($data);
             $response = $response->getBody()->getContents();
-            var_dump($response);
+
             $response = json_decode($response, true);
             $decision = $response['decision'];
             $score = $response['score'];
             $msg = $response['msg'];
-            DB::table('garnet')->insertGetId([
+           /* DB::table('garnet')->insertGetId([
                'leadID' => $leadID,
                'iin' => $iin,
                'app_id' => $app_id,
@@ -953,14 +952,12 @@ class xData extends Controller
                'msg' => $msg,
                'created_at' => Carbon::now(),
                'updated_at' => Carbon::now(),
-            ]);
+            ]);*/
             if (isset($response) && $response['decision'] == 1) {
-               $result['decision'] = 1;
-               break;
+              return false;
             }
-            $result['decision'] = 2;
         } while (false);
-        return response()->json($result);
+        return true;
     }
 
     public function pdlGarnet(Request $request){
@@ -1104,8 +1101,8 @@ class xData extends Controller
         if (isset($result['access']) && $result['access'] == 6){
             $garnet = $this->testGarnet($firstName,$lastName,$middleName,$iin,$docNumber,$docIssued,$email,$mobilePhone,$requestedLoanTerm,$requestedLoanAmount,$leadID);
             $garnet = json_decode($garnet);
-            print_r($garnet);
-            if (isset($garnet->decision) && $garnet->decision == 1){
+
+            if ($garnet){
                 $result['access'] = 4;
                 $result['success'] = true;
                 $result['decision'] = 'garnet';
@@ -1118,5 +1115,14 @@ class xData extends Controller
             }
         }
         return response()->json($result);
+    }
+
+    public function testtest(){
+        $s = $this->testGarnet('Азат','Абзал','','010725550756','043486150','30.07.2017','a.abzal@i-credit.kz','77025374330',50000,15,340191);
+        if ($s){
+            echo 'tes';
+        }else{
+            echo 'etasd';
+        }
     }
 }

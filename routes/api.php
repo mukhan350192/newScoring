@@ -27,3 +27,4 @@ Route::get('/pdl',[xData::class,'pdl']);
 Route::get('/testGarnet',[xData::class,'testGarnet']);
 Route::get('/pdlTest',[xData::class,'pdlTest']);
 Route::get('/pdlGarnet',[xData::class,'pdlGarnet']);
+Route::get('/testtest',[xData::class,'testtest']);
