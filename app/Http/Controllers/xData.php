@@ -1097,6 +1097,77 @@ class xData extends Controller
                 $result['reason_code'] = $reason_code;
                 break;
             }
+
+            if (isset($score) && $score >= 590 && intval($default) <= 10) {
+                $result['score'] = $score;
+                $result['access'] = 4;
+                $result['amount'] = 30000;
+                $result['success'] = true;
+                break;
+            }
+            if (isset($score) && $score >= 590 && (intval($default) > 10) && intval($default) <= 15) {
+                $result['score'] = $score;
+                $result['access'] = 4;
+                $result['amount'] = 20000;
+                $result['success'] = true;
+                break;
+            }
+            if (isset($score) && $score >= 590 && (intval($default) > 15) && intval($default) <= 20) {
+                $result['score'] = $score;
+                $result['access'] = 4;
+                $result['amount'] = 10000;
+                $result['success'] = true;
+                break;
+            }
+            if (isset($score) && $score >= 590 && intval($default) > 20) {
+                $result['score'] = $score;
+                $result['access'] = 6;
+                $result['data'] = "PDL_SCORE: $score,default_probability: $default";
+                $result['success'] = true;
+                break;
+            }
+            if (isset($score) && $score >= 530 && $score < 590 && intval($default) <= 10) {
+                $result['score'] = $score;
+                $result['access'] = 4;
+                $result['amount'] = 20000;
+                $result['success'] = true;
+                break;
+            }
+            if (isset($score) && $score >= 530 && $score < 590 && intval($default) > 10 && intval($default) < 15) {
+                $result['score'] = $score;
+                $result['access'] = 4;
+                $result['amount'] = 15000;
+                $result['success'] = true;
+                break;
+            }
+            if (isset($score) && $score >= 530 && $score < 590 && intval($default) > 15 && intval($default) < 20) {
+                $result['score'] = $score;
+                $result['access'] = 4;
+                $result['amount'] = 10000;
+                $result['success'] = true;
+                break;
+            }
+            if (isset($score) && $score >= 530 && $score < 590 && intval($default) > 20) {
+                $result['access'] = 6;
+                $result['score'] = $score;
+                $result['data'] = "PDL SCORE: $score, default: $default";
+                $result['success'] = true;
+                break;
+            }
+            if (isset($score) && $score < 530 && intval($default) <= 10) {
+                $result['score'] = $score;
+                $result['access'] = 4;
+                $result['amount'] = 10000;
+                $result['success'] = true;
+                break;
+            }
+            if (isset($score) && $score < 530 && intval($default) > 10) {
+                $result['access'] = 6;
+                $result['score'] = $score;
+                $result['data'] = "PDL SCORE: $score, default: $default";
+                $result['success'] = true;
+                break;
+            }
             $result['access'] = 6;
         }while(false);
 
