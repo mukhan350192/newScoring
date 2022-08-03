@@ -940,7 +940,7 @@ class xData extends Controller
                 'body' => $data,
             ]);
             $response = $response->getBody()->getContents();
-            var_dump($response);
+
             $response = json_decode($response, true);
             $decision = $response['decision'];
             $score = $response['score'];
