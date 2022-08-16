@@ -893,6 +893,8 @@ class xData extends Controller
                 $birthDate = '19' . substr($iin, 0, 2) . '-' . substr($iin, 2, 2) . '-' . substr($iin, 4, 2);
             } elseif (substr($iin, 6, 1) == 5 || substr($iin, 6, 1) == 6) {
                 $birthDate = '20' . substr($iin, 0, 2) . '-' . substr($iin, 2, 2) . '-' . substr($iin, 4, 2);
+            }else{
+                $birthDate = '19'.substr($iin,0,2).'-'.substr($iin,2,2).'-'.substr($iin,4,2);
             }
 
 
