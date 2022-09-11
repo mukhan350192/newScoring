@@ -1200,4 +1200,18 @@ class xData extends Controller
             echo 'etasd';
         }
     }
+
+    public function sale(Request $request){
+        $data = $request->all();
+        $result['success'] = false;
+        if (!count($data)){
+            return response()->json($result);
+        }
+        $iins = [];
+        foreach ($data as $d){
+            $iin[] = $d['iin'];
+        }
+        $allIIN = implode(",",$iins);
+        print_r($allIIN);
+    }
 }
